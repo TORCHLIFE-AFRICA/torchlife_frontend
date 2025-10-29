@@ -1,4 +1,14 @@
-import Image from "next/image";
+import { HeroFooter } from "../module/footer/HeroFooter";
+
+export default function Home() {
+  return (
+    <main>
+      <HeroFooter />
+    </main>
+  );
+}
+
+/*import Image from "next/image";
 
 export default function Home() {
   return (
@@ -99,5 +109,5 @@ export default function Home() {
         </a>
       </footer>
     </div>
-  );
-}
+  ); 
+} */
