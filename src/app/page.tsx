@@ -1,8 +1,9 @@
+import HeroSectionPage from "@/module/heroSection";
 
 export default function Home() {
   return (
     <main>
-      Hello
+      <HeroSectionPage />
     </main>
   );
 }

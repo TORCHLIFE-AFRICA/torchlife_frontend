@@ -1,9 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { NavBar, NavLinks, NavButton, MenuIcon, MobileMenu } from "./styles";
+import { NavBar, NavLinks, MenuIcon, MobileMenu } from "./styles";
+import { Button } from "../buttons/styles";
 
-export const HeroFooter = () => {
+const HeroHeaderLink = [
+  { label: 'Home', href: '/' },
+  { label: 'Browse Campaigns', href: '/' },
+  { label: 'How it Works', href: '/' },
+  { label: 'Contact', href: '/' },
+];
+
+export const HeroHeader = () => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,15 +27,16 @@ export const HeroFooter = () => {
 
       {/* Desktop Links */}
       <NavLinks>
-        <a href="#">Home</a>
-        <a href="#campaigns">Browse Campaigns</a>
-        <a href="#how">How it Works</a>
-        <a href="#contact">Contact</a>
+        {HeroHeaderLink.map((link) => (
+          <a key={link.label} href={link.href}>
+            {link.label}
+          </a>
+        ))}
       </NavLinks>
 
       <div className="buttons">
-        <NavButton variant="outlined">Sign Up</NavButton>
-        <NavButton variant="filled">Start a Campaign</NavButton>
+        <Button variant="outlined">Sign Up</Button>
+        <Button variant="filled">Start a Campaign</Button>
       </div>
 
       {/* Mobile Dropdown */}
@@ -37,12 +46,12 @@ export const HeroFooter = () => {
           <a href="#campaigns">Browse Campaigns</a>
           <a href="#how">How it Works</a>
           <a href="#contact">Contact</a>
-          <NavButton variant="outlined">Sign Up</NavButton>
-          <NavButton variant="filled">Start a Campaign</NavButton>
+          <Button variant="outlined">Sign Up</Button>
+          <Button variant="filled">Start a Campaign</Button>
         </MobileMenu>
       )}
     </NavBar>
   );
 };
 
-export default HeroFooter;
+export default HeroHeader;
