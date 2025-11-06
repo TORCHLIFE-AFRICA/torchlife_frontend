@@ -1,4 +1,4 @@
-import { ApiResponse, PaginatedResponse } from "@/types";
+import { ApiResponse } from "@/types";
 
 class ApiClient {
   private baseURL: string;

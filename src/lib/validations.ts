@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CampaignCategory, UserRole } from '@/types';
+import { CampaignCategory } from '@/types';
 
 export const authSchema = z.object({
   email: z.string().email('Invalid email address'),
