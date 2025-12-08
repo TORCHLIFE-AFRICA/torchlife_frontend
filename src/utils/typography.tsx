@@ -43,9 +43,24 @@ export const Font600Medium20 = styled.span`
 font-weight: 500;
 font-style: Medium;
 font-size: 20px;
-leading-trim: NONE;
 line-height: 100%;
 letter-spacing: 0%;
 text-align: center;
+`;
+export const Font400Paragraph = styled.span`
+font-weight: 400;
+font-style: Regular;
+font-size: 15px;
+line-height: 100%;
+letter-spacing: 0%;
 
+`;
+export const Header600 = styled.span`
+font-weight: 600;
+font-style: Medium;
+font-size: 30px;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+color: #263238;
 `;
