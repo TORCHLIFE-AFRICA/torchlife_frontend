@@ -28,8 +28,4 @@ const DateInput: React.FC<DateInputProps> = ({
   );
 };
 
-<<<<<<< HEAD
-export default DateInput;
-=======
-export default DateInput;
->>>>>>> 147f3376b56b8579c8dfd3621d0a34fe99c66b08
+export default DateInput; 
