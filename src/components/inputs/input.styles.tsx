@@ -39,4 +39,4 @@ export const FileUploadPreviewWrapper = styled.div`
     border-radius: 2px;
     object-fit: cover;
   }
-`;
+`; 

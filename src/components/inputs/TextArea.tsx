@@ -29,4 +29,4 @@ const TextArea = ({ label, rows = 4, height, ...props }: TextAreaProps) => {
   );
 };
 
-export { TextArea };
+export { TextArea }; 

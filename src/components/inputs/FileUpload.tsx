@@ -52,4 +52,4 @@ const FileUpload: React.FC<FileUploadProps> = ({ label, onFileSelect }) => {
   );
 };
 
-export default FileUpload;
+export default FileUpload; 
