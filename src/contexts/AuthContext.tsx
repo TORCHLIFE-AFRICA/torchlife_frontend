@@ -7,9 +7,9 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { User, AuthContextType, AuthFormData } from "@/types";
-import { authApi } from "@/lib/api/auth";
-import { apiClient } from "@/lib/api/client";
+import { User, AuthContextType, AuthFormData } from "@/src/types";
+import { authApi } from "@/src/lib/api/auth";
+import { apiClient } from "@/src/lib/api/client";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import { User, AuthFormData } from "@/types";
+import { User, AuthFormData } from "@/src/types";
 
 export interface LoginResponse {
   user: User;

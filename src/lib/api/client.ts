@@ -1,4 +1,4 @@
-import { ApiResponse } from "@/types";
+import { ApiResponse } from "@/src/types";
 
 class ApiClient {
   private baseURL: string;

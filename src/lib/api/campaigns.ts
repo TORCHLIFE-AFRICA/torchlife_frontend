@@ -4,7 +4,7 @@ import {
   CampaignFormData,
   CampaignFilters,
   PaginatedResponse,
-} from "@/types";
+} from "@/src/types";
 
 export const campaignApi = {
   async getCampaigns(

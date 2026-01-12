@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import { Payment, PaymentData } from "@/types";
+import { Payment, PaymentData } from "@/src/types";
 
 export interface PaymentIntent {
   clientSecret: string;
