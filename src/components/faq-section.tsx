@@ -8,28 +8,28 @@ const faqs = [
   {
     question: "How are cases verified?",
     answer:
-      "Every campaign undergoes a rigorous verification process. Our team reviews medical documents, contacts the hospitals directly, and validates the patient's identity and medical condition before any campaign goes live.",
+      "Our medical team reviews documents and contacts the hospital.",
   },
   {
     question: "Can I track where my money goes?",
     answer:
-      "Absolutely. TorchLife provides real-time tracking for all donations. You can see when funds are disbursed to hospitals, view transaction records, and receive updates on the patient's progress.",
+      "Yes – each campaign has a live tracker.",
   },
   {
     question: "What happens if a campaign doesn't reach its goal?",
     answer:
-      "Campaigns that don't reach their full goal still receive the funds raised. We work with hospitals to prioritize the most critical treatments within the available budget. Any remaining medical costs may be covered through follow-up campaigns or partner support.",
+      "Funds are returned to donors or redirected to the nearest urgent case.",
   },
   {
     question: "Is TorchLife a nonprofit?",
     answer:
-      "No, TorchLife is a for-profit health-tech platform. We operate sustainably by charging a transparent platform fee, which allows us to maintain our verification processes, technology infrastructure, and partner network while ensuring long-term impact.",
+      "No",
   },
-  {
-    question: "How fast are funds disbursed to hospitals?",
-    answer:
-      "Once a campaign reaches its goal and verification is complete, funds are typically disbursed to partner hospitals within 24-48 hours. For emergency cases, we have an expedited process that can release funds within hours.",
-  },
+  // {
+  //   question: "How fast are funds disbursed to hospitals?",
+  //   answer:
+  //     "Once a campaign reaches its goal and verification is complete, funds are typically disbursed to partner hospitals within 24-48 hours. For emergency cases, we have an expedited process that can release funds within hours.",
+  // },
 ]
 
 export function FaqSection() {

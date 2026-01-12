@@ -7,7 +7,7 @@ import Image from "next/image"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-primary/40 via-primary/30 to-primary/20">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-linear-to-br from-primary/40 via-primary/30 to-primary/20">
       <div className="container mx-auto px-4 lg:px-8 py-32 lg:py-20">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
@@ -67,6 +67,7 @@ export function HeroSection() {
             </motion.div>
 
             {/* Trust Indicators */}
+            {/*
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -88,6 +89,7 @@ export function HeroSection() {
                 <p className="text-sm">Verified Cases</p>
               </div>
             </motion.div>
+            */}
           </div>
 
           {/* Right Image - Pregnant woman in labor */}
@@ -106,7 +108,7 @@ export function HeroSection() {
                 repeat: Number.POSITIVE_INFINITY,
                 ease: "easeInOut",
               }}
-              className="relative aspect-[4/5] lg:aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl"
+              className="relative aspect-4/5 lg:aspect-3/4 rounded-2xl overflow-hidden shadow-2xl"
             >
               <Image
                 src="/african-pregnant-woman-in-hospital-bed-experiencin.jpg"
@@ -116,7 +118,7 @@ export function HeroSection() {
                 priority
               />
               {/* Subtle overlay for visual cohesion */}
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-primary/30 to-transparent" />
             </motion.div>
             <motion.div
               animate={{

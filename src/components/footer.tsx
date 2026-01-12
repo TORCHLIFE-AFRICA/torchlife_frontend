@@ -41,11 +41,11 @@ export function Footer() {
           <div className="col-span-2 md:col-span-4 lg:col-span-2">
             <Link href="/" className="inline-block mb-6">
               <Image
-                src="/images/torchlifelogo.png"
+                src="/torchlife-logo.png"
                 alt="TorchLife Logo"
                 width={160}
                 height={40}
-                className="h-10 w-auto brightness-0 invert"
+                className="h-[100px] w-auto"
               />
             </Link>
             <p className="text-background/70 mb-6 max-w-sm leading-relaxed">
