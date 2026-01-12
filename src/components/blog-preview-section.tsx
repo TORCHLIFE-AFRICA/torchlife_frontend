@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { SectionWrapper } from "./section-wrapper"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"

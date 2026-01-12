@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -45,7 +45,7 @@ export function Navbar() {
               alt="TorchLife Logo"
               width={200}
               height={56}
-              className="h-12 lg:h-14 w-auto"
+              className="h-[100px] lg:h-[120px] w-auto"
               priority
             />
           </Link>

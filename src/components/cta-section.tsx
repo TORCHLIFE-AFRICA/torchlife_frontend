@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { SectionWrapper } from "./section-wrapper"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/ui/button"
 import { ArrowRight, Heart, Users } from "lucide-react"
 
 export function CtaSection() {

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { SectionWrapper } from "./section-wrapper"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/src/components/ui/accordion"
 
 const faqs = [
   {
