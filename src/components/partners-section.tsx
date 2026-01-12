@@ -9,11 +9,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 const partners = [
   {
     name: "Nigerian Health Alliance",
-    logo: "/nigerian-health-alliance-medical-logo.jpg",
+    logo: "/retina_logo.jpg",
   },
   {
     name: "EcoBank",
-    logo: "/ecobank-financial-logo.jpg",
+    logo: "/eco.png",
   },
   {
     name: "Local Clinics Network",
