@@ -7,9 +7,9 @@ import {
   CampaignFormData,
   Payment,
   CampaignFilters,
-} from "@/types";
-import { campaignApi } from "@/lib/api/campaigns";
-import { paymentApi } from "@/lib/api/payments";
+} from "@/src/types";
+import { campaignApi } from "@/src/lib/api/campaigns";
+import { paymentApi } from "@/src/lib/api/payments";
 
 const CampaignContext = createContext<CampaignContextType | undefined>(
   undefined

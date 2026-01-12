@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react'
 import { AuthMainContainer, MainContainer } from './styles'
-import { Font400Paragraph, Header600 } from '@/utils/typography'
+import { Font400Paragraph, Header600 } from '@/src/utils/typography'
 import { Box } from '@mui/material'
-import { TextField } from '@/components/inputs'
-import { Button } from '@/components/buttons/styles'
+import { TextField } from '@/src/components/inputs'
+import { Button } from '@/src/components/buttons/styles'
 
 export default function AuthPage() {
 
