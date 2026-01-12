@@ -1,6 +1,6 @@
 import React from 'react'
 import {CTASection, HeroButtons, HeroSection, HeroText, ImageWrapper, Section} from './styles'
-import { Button } from '@/components/buttons/styles'
+import { Button } from '@/src/components/ui/button'
 import { Font600Bold, Font600Bold36, Font600Medium20, Font700Bold } from '@/utils/typography'
 import Image from 'next/image'
 import ImageSrc from '../../../public/assets/hero-img.jpg'
