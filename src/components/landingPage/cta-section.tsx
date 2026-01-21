@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { SectionWrapper } from "./section-wrapper"
-import { Button } from "@/src/components/ui/button"
-import { ArrowRight, Heart, Users } from "lucide-react"
+import { motion } from "framer-motion";
+import { SectionWrapper } from "./section-wrapper";
+import { Button } from "@/src/components/ui/button";
+import { ArrowRight, Heart, Users } from "lucide-react";
 
 export function CtaSection() {
   return (
@@ -25,7 +25,8 @@ export function CtaSection() {
             transition={{ delay: 0.1 }}
             className="text-lg lg:text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto"
           >
-            Join thousands of donors and campaigners saving lives through verified healthcare crowdfunding.
+            Join thousands of donors and campaigners saving lives through
+            verified healthcare crowdfunding.
           </motion.p>
 
           <motion.div
@@ -68,5 +69,5 @@ export function CtaSection() {
         </div>
       </div>
     </SectionWrapper>
-  )
+  );
 }

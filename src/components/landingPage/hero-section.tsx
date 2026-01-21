@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Button } from "@/src/components/ui/button"
-import { ArrowRight } from "lucide-react"
-import Image from "next/image"
+import { motion } from "framer-motion";
+import { Button } from "@/src/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { CloudinaryImage } from "../ui/clodinary-image";
+import { CLOUDINARY_ASSETS } from "@/public/assets/staticImages";
 
 export function HeroSection() {
   return (
@@ -17,8 +18,8 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium bg-accent/20 text-accent rounded-full">
-                Verified Healthcare Crowdfunding
+              <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium bg-accent/20 text-amber-50 rounded-full">
+                Africa's first Pregnancy Crowdfunding
               </span>
             </motion.div>
 
@@ -28,7 +29,7 @@ export function HeroSection() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-background leading-tight text-balance mb-6"
             >
-              Every mother deserves a safe delivery
+              Every Pregnant Woman Deserves Safe Delivery
             </motion.h1>
 
             <motion.p
@@ -37,7 +38,7 @@ export function HeroSection() {
               transition={{ duration: 0.8, delay: 0.6 }}
               className="text-lg md:text-xl text-background/80 max-w-2xl mb-8 text-pretty"
             >
-              Your kindness saves lives. Our verification process ensures every story is true.
+              We raise fast funding to start treatment immediately.
             </motion.p>
 
             <motion.div
@@ -46,20 +47,26 @@ export function HeroSection() {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <Button
                   size="lg"
-                  className="bg-accent hover:bg-accent/90 text-foreground font-semibold px-8 py-6 text-lg"
+                  variant="outline"
+                  className="border-2 border-background bg-transparent text-background hover:bg-background hover:text-foreground font-semibold px-8 py-6 text-lg"
                 >
                   Start a Campaign
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <Button
                   size="lg"
-                  variant="outline"
-                  className="border-2 border-background bg-transparent text-background hover:bg-background hover:text-foreground font-semibold px-8 py-6 text-lg"
+                  className="bg-accent hover:bg-accent/90 text-foreground font-semibold px-8 py-6 text-lg"
                 >
                   Donate Now
                 </Button>
@@ -110,13 +117,25 @@ export function HeroSection() {
               }}
               className="relative aspect-4/5 lg:aspect-3/4 rounded-2xl overflow-hidden shadow-2xl"
             >
-              <Image
+              <CloudinaryImage
+                publicId={CLOUDINARY_ASSETS.pregnantWoman}
+                alt={"Pregnant woman in pain"}
+                options={{
+                  quality: "auto",
+                  format: "auto",
+                  width: 800,
+                  height: 1100,
+                }}
+                className="object-cover"
+                priority={true}
+              />
+              {/* <Image
                 src="/african-pregnant-woman-in-hospital-bed-experiencin.jpg"
                 alt="Pregnant woman in need of medical support"
                 fill
                 className="object-cover"
                 priority
-              />
+              /> */}
               {/* Subtle overlay for visual cohesion */}
               <div className="absolute inset-0 bg-linear-to-t from-primary/30 to-transparent" />
             </motion.div>
@@ -149,5 +168,5 @@ export function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

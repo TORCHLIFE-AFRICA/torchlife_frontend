@@ -10,6 +10,7 @@ const footerLinks = {
     { label: "Browse Campaigns", href: "#campaigns" },
     { label: "Start a Campaign", href: "#" },
     { label: "How it Works", href: "#how-it-works" },
+    { label: "Pricing", href: "/pricing" },
     { label: "Partner Hospitals", href: "#" },
   ],
   company: [

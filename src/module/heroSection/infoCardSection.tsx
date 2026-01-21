@@ -1,4 +1,4 @@
-import InfoCard from "@/components/card/infoCard";
+import InfoCard from "@/src/components/card/infoCard";
 import { Box } from "@mui/material";
 
 export default function InfoCardSection() {
