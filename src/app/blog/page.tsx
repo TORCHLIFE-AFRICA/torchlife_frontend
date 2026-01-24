@@ -276,14 +276,14 @@ export default function BlogPage() {
                           {post.author}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      {/* <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Heart className="h-3.5 w-3.5" />
                         <span>{post.likes}</span>
                       </div>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <MessageSquare className="h-3.5 w-3.5" />
                         <span>{post.comments}</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </Link>

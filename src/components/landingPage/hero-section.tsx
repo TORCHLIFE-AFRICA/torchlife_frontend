@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -10,6 +12,18 @@ export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-linear-to-br from-primary/40 via-primary/30 to-primary/20">
       <div className="container mx-auto px-4 lg:px-8 py-32 lg:py-20">
+        {/* Mobile-only badge (above image) */}
+<div className="lg:hidden mb-6">
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8, delay: 0.2 }}
+  >
+    <span className="inline-block px-4 py-1.5 text-sm font-medium bg-accent/20 text-amber-50 rounded-full">
+      Africa's first Pregnancy Crowdfunding
+    </span>
+  </motion.div>
+</div>
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="order-2 lg:order-1">
@@ -17,6 +31,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
+              className="hidden lg:block"
             >
               <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium bg-accent/20 text-amber-50 rounded-full">
                 Africa's first Pregnancy Crowdfunding
