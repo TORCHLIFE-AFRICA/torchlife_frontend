@@ -1,12 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/src/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { CloudinaryImage } from "../ui/clodinary-image";
 import { CLOUDINARY_ASSETS } from "@/public/assets/staticImages";
+import { CampaignDonationModals } from "../modals/CampaignDonationModals";
 
 export function HeroSection() {
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
+  const [showDonationModal, setShowDonationModal] = useState(false);
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-linear-to-br from-primary/40 via-primary/30 to-primary/20">
       <div className="container mx-auto px-4 lg:px-8 sm:py-32  lg:py-20">
@@ -70,6 +75,7 @@ export function HeroSection() {
                   size="lg"
                   variant="outline"
                   className="border-2 border-background bg-transparent text-background hover:bg-background hover:text-foreground font-semibold px-8 py-6 text-lg"
+                  onClick={() => setShowCampaignModal(true)}
                 >
                   Start a Campaign
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -82,6 +88,7 @@ export function HeroSection() {
                 <Button
                   size="lg"
                   className="bg-accent hover:bg-accent/90 text-foreground font-semibold px-8 py-6 text-lg"
+                  onClick={() => setShowDonationModal(true)}
                 >
                   Donate Now
                 </Button>
@@ -182,6 +189,20 @@ export function HeroSection() {
           </motion.div>
         </div>
       </div>
+      
+      {/* Campaign Modal */}
+      <CampaignDonationModals
+        open={showCampaignModal}
+        onOpenChange={setShowCampaignModal}
+        type="campaign"
+      />
+      
+      {/* Donation Modal */}
+      <CampaignDonationModals
+        open={showDonationModal}
+        onOpenChange={setShowDonationModal}
+        type="donation"
+      />
     </section>
   );
 }

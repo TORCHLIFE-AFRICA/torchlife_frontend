@@ -28,6 +28,7 @@ interface Campaign {
   goal: number;
   daysLeft: number;
   category: string;
+  sample: boolean;
 }
 
 export const campaigns = [
@@ -46,6 +47,7 @@ Your support will cover medical bills, medication, and post-delivery care.
     goal: 100000,
     daysLeft: 3,
     category: "Emergency Care",
+    sample: true,
   },
   {
     id: "diana-Enugu-clinicc-1849TM20012026DT",
@@ -61,6 +63,23 @@ Funds will be used to upgrade medical equipment and train healthcare workers.
     goal: 200000,
     daysLeft: 5,
     category: "Clinic Support",
+    sample: true,
+  },
+  {
+    id: "sarah-ogun-state-1849TM20012026DT",
+    title: "Sarah's Prenatal Care Support",
+    excerpt:
+      "Help Sarah, a first-time mother from Ogun State, afford essential prenatal vitamins and check-ups.",
+    description: `
+Sarah is a 25-year-old first-time mother who can't afford prenatal vitamins and regular check-ups.
+Your support will ensure she has a healthy pregnancy and safe delivery.
+    `,
+    image: "/pregnant-woman-african-prenatal-care.jpg",
+    raised: 80000,
+    goal: 150000,
+    daysLeft: 7,
+    category: "Prenatal Care",
+    sample: true,
   },
 ];
 
@@ -307,85 +326,111 @@ export function CampaignSamplesSection({ title, showBrowse }: Props) {
           </motion.div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {campaigns.map((campaign, index) => {
-            const progress = Math.round(
-              (campaign.raised / campaign.goal) * 100,
-            );
-            return (
-              <motion.article
-                key={campaign.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-card rounded-xl overflow-hidden border border-border hover:shadow-lg transition-shadow"
-              >
-                <Link
-                  href={`/campaigns/${campaign.id.toLowerCase().replace(/ /g, "-")}`}
+        {campaigns.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {campaigns.map((campaign, index) => {
+              const progress = Math.round(
+                (campaign.raised / campaign.goal) * 100,
+              );
+              return (
+                <motion.article
+                  key={campaign.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ y: -5 }}
+                  className="bg-card rounded-xl overflow-hidden border border-border hover:shadow-lg transition-shadow"
                 >
-                  <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={campaign.image || "/placeholder.svg"}
-                      alt={campaign.title}
-                      fill
-                      className="object-cover transition-transform hover:scale-105 duration-300"
-                    />
-                    <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
-                      <CountdownTimer daysLeft={campaign.daysLeft} />
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
-                        {campaign.category}
-                      </span>
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-2 line-clamp-2">
-                      {campaign.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                      {campaign.excerpt || campaign.description}
-                    </p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium">
-                          ₦{campaign.raised.toLocaleString()}
-                        </span>
-                        <span className="text-muted-foreground">
-                          of ₦{campaign.goal.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${progress}%` }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 1, delay: 0.3 }}
-                          className="bg-primary h-2 rounded-full"
-                        />
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {progress}% funded
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="p-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2 w-full"
-                    onClick={() => openShareModal(campaign)}
+                  <Link
+                    href={`/campaigns/${campaign.id.toLowerCase().replace(/ /g, "-")}`}
                   >
-                    <Share2 className="h-4 w-4" /> Share
-                  </Button>
-                </div>
-              </motion.article>
-            );
-          })}
-        </div>
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={campaign.image || "/placeholder.svg"}
+                        alt={campaign.title}
+                        fill
+                        className="object-cover transition-transform hover:scale-105 duration-300"
+                      />
+                      <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+                        <CountdownTimer daysLeft={campaign.daysLeft} />
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
+                          {campaign.category}
+                        </span>
+                      </div>
+                      <h3 className="font-semibold text-foreground mb-2 line-clamp-2">
+                        {campaign.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {campaign.excerpt || campaign.description}
+                      </p>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="font-medium">
+                            ₦{campaign.raised.toLocaleString()}
+                          </span>
+                          <span className="text-muted-foreground">
+                            of ₦{campaign.goal.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: `${progress}%` }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, delay: 0.3 }}
+                            className="bg-primary h-2 rounded-full"
+                          />
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {progress}% funded
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="p-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2 w-full"
+                      onClick={() => openShareModal(campaign)}
+                    >
+                      <Share2 className="h-4 w-4" /> Share
+                    </Button>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center py-16 bg-muted rounded-xl"
+          >
+            <h3 className="text-xl font-semibold mb-4">
+              No campaigns available yet
+            </h3>
+            <p className="text-muted-foreground mb-8">
+              We're getting ready to launch our first set of campaigns. Every
+              case on TorchLife goes through careful verification to protect
+              donors and the people we serve.
+            </p>
+            <Button
+              variant="default"
+              onClick={() =>
+                window.open("https://forms.gle/P1rbxd4RUw3Sx1xN8", "_blank")
+              }
+            >
+              Start a Campaign
+            </Button>
+          </motion.div>
+        )}
       </div>
 
       {selectedCampaign && (

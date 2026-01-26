@@ -7,6 +7,7 @@ import { Button } from "@/src/components/ui/button";
 import Link from "next/link";
 import { CloudinaryImage } from "../ui/clodinary-image";
 import { CLOUDINARY_ASSETS } from "@/public/assets/staticImages";
+import { CampaignDonationModals } from "../modals/CampaignDonationModals";
 
 const navItems = [
   { label: "Browse Campaigns", href: "/campaigns" },
@@ -18,7 +19,7 @@ const navItems = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,12 +91,7 @@ export function Navbar() {
                 <Link href="/auth?auth=signIn">
                   <Button
                     variant={"ghost"}
-                    className={`font-semibold px-6 transition-colors ${
-                      isScrolled
-                        ? " hover:bg-primary/20 text-black "
-                        : "bg-transparent hover:bg-transparent/10 text-white hover:text-gray-300"
-                    }`}
-                    onClick={() => setShowUpgradeModal(true)}
+                    className={`font-semibold px-6 transition-colors ${isScrolled ? " hover:bg-primary/20 text-black " : "bg-transparent hover:bg-transparent/10 text-white hover:text-gray-300"}`}
                   >
                     Sign In
                   </Button>
@@ -107,14 +103,10 @@ export function Navbar() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
-                  className={`font-semibold px-6 transition-colors ${
-                    isScrolled
-                      ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-                      : "bg-white hover:bg-white/90 text-primary"
-                  }`}
-                  onClick={() => setShowUpgradeModal(true)}
+                  className={`font-semibold px-6 transition-colors ${isScrolled ? "bg-primary hover:bg-primary/90 text-primary-foreground" : "bg-white hover:bg-white/90 text-primary"}`}
+                  onClick={() => setShowCampaignModal(true)}
                 >
-                  <Link href="/auth">Sign Up</Link>
+                  Start a Campaign
                 </Button>
               </motion.div>
             </div>
@@ -154,7 +146,13 @@ export function Navbar() {
                   </Link>
                 ))}
                 <div className="px-4 pt-2">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                    onClick={() => {
+                      setShowCampaignModal(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
                     Start a Campaign
                   </Button>
                 </div>
@@ -163,6 +161,13 @@ export function Navbar() {
           )}
         </AnimatePresence>
       </nav>
+      
+      {/* Campaign Modal */}
+      <CampaignDonationModals
+        open={showCampaignModal}
+        onOpenChange={setShowCampaignModal}
+        type="campaign"
+      />
     </motion.header>
   );
 }
