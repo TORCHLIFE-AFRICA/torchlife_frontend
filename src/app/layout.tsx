@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "TorchLife",
     images: [
       {
-        url: "https://res.cloudinary.com/dmv89zsld/image/upload/v1768658903/PHOTO-2026-01-16-10-05-19_ytntkv.jpg",
+        url: "https://res.cloudinary.com/dzirjoyqd/image/upload/v1769468389/banner_co6jwm.jpg",
         width: 1200,
         height: 630,
         alt: "TorchLife logo",
