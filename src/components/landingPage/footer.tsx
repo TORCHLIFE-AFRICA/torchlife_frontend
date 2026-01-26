@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import Image from "next/image"
-import Link from "next/link"
-import { Twitter, Instagram, Linkedin } from "lucide-react"
+import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { Twitter, Instagram, Linkedin } from "lucide-react";
 
 const footerLinks = {
   platform: [
@@ -25,13 +25,13 @@ const footerLinks = {
     { label: "FAQs", href: "#" },
     { label: "Trust & Safety", href: "#" },
   ],
-}
+};
 
 const socialLinks = [
   { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
   { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
   { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-]
+];
 
 export function Footer() {
   return (
@@ -50,20 +50,26 @@ export function Footer() {
               />
             </Link>
             <p className="text-background/70 mb-6 max-w-sm leading-relaxed">
-              TorchLife is a for-profit health-tech platform providing verified, transparent, and fast healthcare
-              crowdfunding for maternal care.
+              TorchLife is a for-profit health-tech platform providing verified,
+              transparent, and fast healthcare crowdfunding for maternal care.
             </p>
             <div className="space-y-2 text-sm text-background/70">
               <p>
                 <span className="font-medium text-background">Email:</span>{" "}
-                <a href="mailto:info@torchlife.org" className="hover:text-accent transition-colors">
+                <a
+                  href="mailto:info@torchlife.org"
+                  className="hover:text-accent transition-colors"
+                >
                   info@torchlife.org
                 </a>
               </p>
               <p>
                 <span className="font-medium text-background">Phone:</span>{" "}
-                <a href="tel:+2348000000000" className="hover:text-accent transition-colors">
-                  +234 800 000 0000
+                <a
+                  href="tel:+2347069014391"
+                  className="hover:text-accent transition-colors"
+                >
+                  +234 706 901 4391
                 </a>
               </p>
             </div>
@@ -75,7 +81,10 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.platform.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-background/70 hover:text-accent transition-colors">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-background/70 hover:text-accent transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -88,7 +97,10 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-background/70 hover:text-accent transition-colors">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-background/70 hover:text-accent transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -101,7 +113,10 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-sm text-background/70 hover:text-accent transition-colors">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-background/70 hover:text-accent transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -112,12 +127,20 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-background/20 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-background/60">© 2026 TorchLife. All rights reserved.</p>
+          <p className="text-sm text-background/60">
+            © 2026 TorchLife. All rights reserved.
+          </p>
           <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-sm text-background/60 hover:text-accent transition-colors">
+            <Link
+              href="/privacy"
+              className="text-sm text-background/60 hover:text-accent transition-colors"
+            >
               Privacy Policy
             </Link>
-            <Link href="/terms" className="text-sm text-background/60 hover:text-accent transition-colors">
+            <Link
+              href="/terms"
+              className="text-sm text-background/60 hover:text-accent transition-colors"
+            >
               Terms of Service
             </Link>
           </div>
@@ -140,5 +163,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

@@ -45,7 +45,7 @@ export function CampaignDonationModals({
   };
 
   const renderCampaignModal = () => (
-    <>
+    <div className="max-w-md w-full min-h-[400px]">
       <DialogHeader className="text-center">
         <DialogTitle className="text-2xl font-bold">
           Start a Campaign
@@ -72,7 +72,7 @@ export function CampaignDonationModals({
           Close
         </Button>
       </DialogFooter>
-    </>
+    </div>
   );
 
   const renderDonationModal = () => (
