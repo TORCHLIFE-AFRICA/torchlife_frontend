@@ -16,13 +16,13 @@ const contactOptions = [
     title: "WhatsApp Support",
     description: "Chat with our team directly",
     icon: <Phone className="h-6 w-6 text-primary-foreground" />,
-    action: () => window.open("https://wa.me/2348000000000", "_blank"),
+    action: () => window.open("https://wa.me/2347069014391", "_blank"),
   },
   {
     title: "Email Us",
     description: "Send us a detailed message",
     icon: <Mail className="h-6 w-6 text-primary-foreground" />,
-    action: () => (window.location.href = "mailto:help@gmail.com"),
+    action: () => (window.location.href = "mailto:info@torchlife.org"),
   },
 ];
 
