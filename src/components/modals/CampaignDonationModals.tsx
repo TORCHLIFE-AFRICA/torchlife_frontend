@@ -31,10 +31,10 @@ export function CampaignDonationModals({
 
   // Sample account details (these would be dynamic in a real app)
   const accountDetails = {
-    bankName: "TorchLife Foundation Bank",
+    bankName: "TorchLife Africa",
     accountNumber: "1234567890",
     accountName: "TorchLife Maternity Fund",
-    whatsappNumber: "+234 801 234 5678",
+    whatsappNumber: "+234 7069014391",
     campaignId: campaignId,
   };
 
