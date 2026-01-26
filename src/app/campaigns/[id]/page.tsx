@@ -25,6 +25,7 @@ import {
   DialogFooter,
 } from "@/src/components/ui/dialog";
 import { Twitter, Facebook, Linkedin, Copy } from "lucide-react";
+import { CampaignDonationModals } from "@/src/components/modals/CampaignDonationModals";
 
 // Define Campaign interface and sample data
 interface Campaign {
@@ -37,6 +38,7 @@ interface Campaign {
   goal: number;
   daysLeft: number;
   category: string;
+  sample: boolean;
 }
 
 const campaigns: Campaign[] = [
@@ -55,6 +57,7 @@ Your support will cover medical bills, medication, and post-delivery care.
     goal: 100000,
     daysLeft: 3,
     category: "Emergency Care",
+    sample: true,
   },
   {
     id: "diana-Enugu-clinicc-1849TM20012026DT",
@@ -70,6 +73,23 @@ Funds will be used to upgrade medical equipment and train healthcare workers.
     goal: 200000,
     daysLeft: 5,
     category: "Clinic Support",
+    sample: true,
+  },
+  {
+    id: "sarah-ogun-state-1849TM20012026DT",
+    title: "Sarah's Prenatal Care Support",
+    excerpt:
+      "Help Sarah, a first-time mother from Ogun State, afford essential prenatal vitamins and check-ups.",
+    description: `
+Sarah is a 25-year-old first-time mother who can't afford prenatal vitamins and regular check-ups.
+Your support will ensure she has a healthy pregnancy and safe delivery.
+    `,
+    image: "/pregnant-woman-african-prenatal-care.jpg",
+    raised: 80000,
+    goal: 150000,
+    daysLeft: 7,
+    category: "Prenatal Care",
+    sample: true,
   },
 ];
 
@@ -211,6 +231,7 @@ export default function CampaignDetailPage() {
   const [bookmarked, setBookmarked] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [donationAmount, setDonationAmount] = useState("10000");
+  const [showDonationModal, setShowDonationModal] = useState(false);
 
   // Countdown timer state
   const [hours, setHours] = useState(0);
@@ -315,56 +336,56 @@ export default function CampaignDetailPage() {
       {/* Campaign Page */}
       <section className="py-12 md:py-16">
         <div className="container mx-2 sm:mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Back Button */}
+          {/* Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <Link href="/campaigns">
+              <Button variant="ghost" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Back to all campaigns
+              </Button>
+            </Link>
+          </motion.div>
+
+          {/* Campaign Header */}
+          <div className="max-w-4xl mx-auto">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mb-4"
             >
-              <Link href="/campaigns">
-                <Button variant="ghost" className="gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to all campaigns
-                </Button>
-              </Link>
+              <span className="inline-block px-4 py-1.5 text-sm font-medium bg-primary/10 text-primary rounded-full">
+                {campaign.category}
+              </span>
+              <span className="inline-block ml-2 px-4 py-1.5 text-sm font-medium bg-warning/10 text-warning rounded-full">
+                {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}{" "}
+                left
+              </span>
             </motion.div>
 
-            {/* Campaign Header */}
-            <div className="max-w-4xl mx-auto">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="mb-4"
-              >
-                <span className="inline-block px-4 py-1.5 text-sm font-medium bg-primary/10 text-primary rounded-full">
-                  {campaign.category}
-                </span>
-                <span className="inline-block ml-2 px-4 py-1.5 text-sm font-medium bg-warning/10 text-warning rounded-full">
-                  {formatTime(hours)}:{formatTime(minutes)}:{formatTime(seconds)}{" "}
-                  left
-                </span>
-              </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-3xl md:text-4xl font-bold text-foreground mb-6 text-balance"
+            >
+              {campaign.title}
+            </motion.h1>
 
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="text-3xl md:text-4xl font-bold text-foreground mb-6 text-balance"
-              >
-                {campaign.title}
-              </motion.h1>
-
-              {/* Campaign Actions */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex flex-wrap items-center gap-4 mb-8"
-              >
-                <div className="ml-auto flex items-center gap-3">
-                  {/* <Button
+            {/* Campaign Actions */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="flex flex-wrap items-center gap-4 mb-8"
+            >
+              <div className="ml-auto flex items-center gap-3">
+                {/* <Button
                     variant="ghost"
                     size="icon"
                     className={`${liked ? "text-primary" : ""}`}
@@ -384,92 +405,131 @@ export default function CampaignDetailPage() {
                       className={`h-4 w-4 ${bookmarked ? "fill-primary" : ""}`}
                     />
                     <span className="sr-only">Bookmark</span> */}
-                  {/* </Button> */}
-                  <Button variant="ghost" size="icon" onClick={handleShare}>
-                    <Share2 className="h-4 w-4" />
-                    <span className="sr-only">Share</span>
-                  </Button>
-                </div>
-              </motion.div>
+                {/* </Button> */}
+                <Button variant="ghost" size="icon" onClick={handleShare}>
+                  <Share2 className="h-4 w-4" />
+                  <span className="sr-only">Share</span>
+                </Button>
+              </div>
+            </motion.div>
 
-              {/* Featured Image */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="relative h-80 md:h-96 overflow-hidden rounded-xl mb-10"
-              >
-                <Image
-                  src={campaign.image || "/placeholder.svg"}
-                  alt={campaign.title}
-                  fill
-                  className="object-cover"
+            {/* Featured Image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="relative h-80 md:h-96 overflow-hidden rounded-xl mb-10"
+            >
+              <Image
+                src={campaign.image || "/placeholder.svg"}
+                alt={campaign.title}
+                fill
+                className="object-cover"
+              />
+            </motion.div>
+
+            {/* Funding Progress */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="bg-card rounded-xl p-6 border border-border mb-10"
+            >
+              <div className="flex flex-wrap justify-between items-end gap-4 mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold">
+                    ₦{campaign.raised.toLocaleString()}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    raised of ₦{campaign.goal.toLocaleString()} goal
+                  </p>
+                </div>
+                <div className="text-right">
+                  <h2 className="text-2xl font-bold">{progress}%</h2>
+                  <p className="text-muted-foreground">funded</p>
+                </div>
+              </div>
+
+              <div className="w-full bg-muted rounded-full h-4 mb-4">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 1, delay: 0.7 }}
+                  className="bg-primary h-4 rounded-full"
                 />
-              </motion.div>
+              </div>
 
-              {/* Funding Progress */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="bg-card rounded-xl p-6 border border-border mb-10"
-              >
-                <div className="flex flex-wrap justify-between items-end gap-4 mb-4">
-                  <div>
-                    <h2 className="text-2xl font-bold">
-                      ₦{campaign.raised.toLocaleString()}
-                    </h2>
-                    <p className="text-muted-foreground">
-                      raised of ₦{campaign.goal.toLocaleString()} goal
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <h2 className="text-2xl font-bold">{progress}%</h2>
-                    <p className="text-muted-foreground">funded</p>
-                  </div>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <p className="text-sm text-muted-foreground">Donors</p>
+                  <p className="font-medium">
+                    {Math.floor(campaign.raised / 10000)}
+                  </p>
                 </div>
-
-                <div className="w-full bg-muted rounded-full h-4 mb-4">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 1, delay: 0.7 }}
-                    className="bg-primary h-4 rounded-full"
-                  />
+                <div>
+                  <p className="text-sm text-muted-foreground">Time Left</p>
+                  <p className="font-medium">
+                    {formatTime(hours)}:{formatTime(minutes)}:
+                    {formatTime(seconds)}
+                  </p>
                 </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    Campaign Created
+                  </p>
+                  <p className="font-medium">2 weeks ago</p>
+                </div>
+              </div>
+            </motion.div>
 
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Donors</p>
-                    <p className="font-medium">
-                      {Math.floor(campaign.raised / 10000)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Time Left</p>
-                    <p className="font-medium">
-                      {formatTime(hours)}:{formatTime(minutes)}:
-                      {formatTime(seconds)}
-                    </p>
-                  </div>
-                  <div>
+            {/* Donation Form */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="bg-card rounded-xl p-6 border border-border mb-10"
+            >
+              <h2 className="text-xl font-bold mb-4">Make a Donation</h2>
+
+              {campaign.sample ? (
+                // Sample Campaign - Show notice and submit button
+                <>
+                  <div className="bg-muted/30 rounded-lg p-4 mb-6">
+                    <h3 className="font-semibold mb-2 text-primary">
+                      Sample Campaign Notice
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                      Campaign Created
+                      This is a sample campaign for demonstration purposes.
+                      Donations are currently disabled while we verify our first
+                      set of real campaigns.
                     </p>
-                    <p className="font-medium">2 weeks ago</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Real campaigns will be available soon! Check back
+                      regularly for updates.
+                    </p>
                   </div>
-                </div>
-              </motion.div>
 
-              {/* Donation Form */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="bg-card rounded-xl p-6 border border-border mb-10"
-              >
-                <h2 className="text-xl font-bold mb-4">Make a Donation</h2>
-
+                  <div className="space-y-3">
+                    <Button
+                      variant="secondary"
+                      className="w-full py-6 text-lg"
+                      onClick={() =>
+                        window.open(
+                          "https://forms.gle/P1rbxd4RUw3Sx1xN8",
+                          "_blank",
+                        )
+                      }
+                    >
+                      Submit a campaign for review
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center">
+                      TorchLife verifies all campaigns before publishing to
+                      ensure transparency and trust.
+                    </p>
+                  </div>
+                </>
+              ) : (
+                // Real Campaign - Show donation form
                 <form onSubmit={handleDonation} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">
@@ -482,10 +542,11 @@ export default function CampaignDetailPage() {
                           key={amount}
                           type="button"
                           onClick={() => setDonationAmount(amount)}
-                          className={`px-6 py-3 rounded-lg border text-center min-w-[90px] flex-1 sm:flex-auto  ${donationAmount === amount
-                            ? "border-primary bg-primary/10"
-                            : "border-border hover:border-primary"
-                            } transition-colors`}
+                          className={`px-6 py-3 rounded-lg border text-center min-w-[90px] flex-1 sm:flex-auto  ${
+                            donationAmount === amount
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:border-primary"
+                          } transition-colors`}
                         >
                           ₦{amount}
                         </button>
@@ -508,55 +569,78 @@ export default function CampaignDetailPage() {
                   {/* Checkboxes */}
                   <div className="space-y-2">
                     <label className="flex items-center gap-2">
-                      <input type="checkbox" className="rounded text-primary focus:ring-primary" />
-                      <span className="text-sm">I'd like to cover the transaction fees</span>
+                      <input
+                        type="checkbox"
+                        className="rounded text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm">
+                        I'd like to cover the transaction fees
+                      </span>
                     </label>
                     <label className="flex items-center gap-2">
-                      <input type="checkbox" className="rounded text-primary focus:ring-primary" />
-                      <span className="text-sm">Make this donation anonymous</span>
+                      <input
+                        type="checkbox"
+                        className="rounded text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm">
+                        Make this donation anonymous
+                      </span>
                     </label>
                     <label className="flex items-center gap-2">
-                      <input type="checkbox" className="rounded text-primary focus:ring-primary" />
-                      <span className="text-sm">Sign me up for updates about this campaign</span>
+                      <input
+                        type="checkbox"
+                        className="rounded text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm">
+                        Sign me up for updates about this campaign
+                      </span>
                     </label>
                   </div>
 
                   {/* Buttons */}
                   <div className="space-y-3">
-                    <Button type="submit" className="w-full py-6 text-lg">
+                    <Button
+                      type="button"
+                      className="w-full py-6 text-lg"
+                      onClick={() => setShowDonationModal(true)}
+                    >
                       Donate Now
                     </Button>
-                    {/* <Button variant="outline" className="w-full py-6 text-lg">
-                      Fundraise for this campaign
-                    </Button> */}
-                    <Button variant="secondary" className="w-full py-6 text-lg">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="w-full py-6 text-lg"
+                      onClick={() => setShowDonationModal(true)}
+                    >
                       Offset Bill
                     </Button>
                   </div>
 
                   <p className="text-xs text-muted-foreground text-center">
-                    Your donation is secured with end-to-end encryption. TorchLife is a registered organization.
+                    Your donation is secured with end-to-end encryption.
+                    TorchLife is a registered organization.
                   </p>
                 </form>
-              </motion.div>
+              )}
+            </motion.div>
 
-              {/* Campaign Description */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="prose prose-lg max-w-none mb-10"
-              >
-                <h2 className="text-2xl font-bold">Campaign Story</h2>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: campaign.description?.replace(/\n/g, "<br>") || "",
-                  }}
-                />
-              </motion.div>
+            {/* Campaign Description */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              className="prose prose-lg max-w-none mb-10"
+            >
+              <h2 className="text-2xl font-bold">Campaign Story</h2>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: campaign.description?.replace(/\n/g, "<br>") || "",
+                }}
+              />
+            </motion.div>
 
-              {/* Comments Section */}
-              {/* <motion.div
+            {/* Comments Section */}
+            {/* <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.9 }}
@@ -568,8 +652,8 @@ export default function CampaignDetailPage() {
                 </div>
 
                 <div className="space-y-6"> */}
-                  {/* Add Comment */}
-                  {/* <div className="flex gap-4">
+            {/* Add Comment */}
+            {/* <div className="flex gap-4">
                     <div className="relative h-10 w-10 rounded-full overflow-hidden shrink-0 bg-muted">
                       <span className="absolute inset-0 flex items-center justify-center text-muted-foreground">
                         You
@@ -586,9 +670,9 @@ export default function CampaignDetailPage() {
                       </div>
                     </div>
                   </div> */}
-                {/* </div> */}
-              {/* </motion.div> */}
-            </div>
+            {/* </div> */}
+            {/* </motion.div> */}
+          </div>
         </div>
       </section>
 
@@ -598,6 +682,14 @@ export default function CampaignDetailPage() {
         setOpen={setShareModalOpen}
         campaignTitle={campaign.title}
         campaignLink={`/campaigns/${campaignId}`}
+      />
+
+      {/* Donation Modal */}
+      <CampaignDonationModals
+        open={showDonationModal}
+        onOpenChange={setShowDonationModal}
+        type="donation"
+        campaignId={campaign.id}
       />
 
       <Footer />

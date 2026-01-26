@@ -7,6 +7,7 @@ import { Button } from "@/src/components/ui/button";
 import Link from "next/link";
 import { CloudinaryImage } from "../ui/clodinary-image";
 import { CLOUDINARY_ASSETS } from "@/public/assets/staticImages";
+import { CampaignDonationModals } from "../modals/CampaignDonationModals";
 
 const navItems = [
   { label: "Browse Campaigns", href: "/campaigns" },
@@ -18,7 +19,7 @@ const navItems = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +36,7 @@ export function Navbar() {
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-background/50 backdrop-blur-md shadow-sm border-b border-border"
+          ? "bg-background/10 backdrop-blur-md shadow-sm border-b border-border"
           : "bg-transparent"
       }`}
     >
@@ -49,7 +50,7 @@ export function Navbar() {
               options={{
                 quality: "auto",
                 format: "auto",
-                width: 200,
+                width: 150,
                 height: 100,
               }}
               className="object-cover"
@@ -70,7 +71,7 @@ export function Navbar() {
                   className={`text-sm font-medium transition-colors ${
                     isScrolled
                       ? "text-foreground/80 hover:text-primary"
-                      : "text-gray-400 hover:text-gray-20"
+                      : "text-gray-50 hover:text-gray-20"
                   }`}
                 >
                   {item.label}
@@ -90,14 +91,17 @@ export function Navbar() {
                 <Link href="/auth?auth=signIn">
                   <Button
                     variant={"ghost"}
-                    className={`font-semibold px-6 transition-colors ${
-                      isScrolled
-                        ? " hover:bg-primary/20 text-black "
-                        : "bg-transparent hover:bg-transparent/10 text-white hover:text-gray-300"
-                    }`}
-                    onClick={() => setShowUpgradeModal(true)}
+                    className={`font-semibold px-6 transition-colors ${isScrolled ? " hover:bg-primary/20 text-black " : "bg-transparent hover:bg-transparent/10 text-white hover:text-gray-300"}`}
                   >
                     Sign In
+                  </Button>
+                </Link>
+                <Link href="/auth">
+                  <Button
+                    variant={"destructive"}
+                    className={`font-semibold bg-accent px-6 transition-colors ${isScrolled ? " hover:bg-primary/20 text-black " : "bg-accent hover:bg-transparent/10 text-white hover:text-gray-300"}`}
+                  >
+                    Sign Up
                   </Button>
                 </Link>
               </motion.div>
@@ -107,14 +111,10 @@ export function Navbar() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
-                  className={`font-semibold px-6 transition-colors ${
-                    isScrolled
-                      ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-                      : "bg-white hover:bg-white/90 text-primary"
-                  }`}
-                  onClick={() => setShowUpgradeModal(true)}
+                  className={`font-semibold px-6 transition-colors ${isScrolled ? "bg-primary hover:bg-primary/90 text-primary-foreground" : "bg-white hover:bg-white/90 text-primary"}`}
+                  onClick={() => setShowCampaignModal(true)}
                 >
-                  <Link href="/auth">Sign Up</Link>
+                  Start a Campaign
                 </Button>
               </motion.div>
             </div>
@@ -153,8 +153,50 @@ export function Navbar() {
                     {item.label}
                   </Link>
                 ))}
-                <div className="px-4 pt-2">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                <div className="px-4 py-6 space-y-6">
+                  {/* Auth buttons */}
+                  <div className="flex gap-3">
+                    <motion.div
+                      className="flex w-full gap-3"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Link href="/auth?auth=signIn" className="w-1/2">
+                        <Button
+                          variant="outline"
+                          className={`w-full font-semibold py-3 transition-colors ${
+                            isScrolled
+                              ? "hover:bg-primary/20 text-black"
+                              : "bg-transparent hover:bg-white/10 text-accent"
+                          }`}
+                        >
+                          Sign In
+                        </Button>
+                      </Link>
+
+                      <Link href="/auth" className="w-1/2">
+                        <Button
+                          variant="destructive"
+                          className={`w-full font-semibold py-3 transition-colors ${
+                            isScrolled
+                              ? "hover:bg-primary/20 text-black"
+                              : "bg-accent hover:bg-accent/80 text-white"
+                          }`}
+                        >
+                          Sign Up
+                        </Button>
+                      </Link>
+                    </motion.div>
+                  </div>
+
+                  {/* Primary CTA */}
+                  <Button
+                    className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                    onClick={() => {
+                      setShowCampaignModal(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
                     Start a Campaign
                   </Button>
                 </div>
@@ -163,6 +205,13 @@ export function Navbar() {
           )}
         </AnimatePresence>
       </nav>
+
+      {/* Campaign Modal */}
+      <CampaignDonationModals
+        open={showCampaignModal}
+        onOpenChange={setShowCampaignModal}
+        type="campaign"
+      />
     </motion.header>
   );
 }

@@ -24,22 +24,9 @@ export const metadata: Metadata = {
     "TorchLife",
   ],
   icons: {
-    icon: [
-      {
-        url: "/torchlife-logo.png",
-        rel: "icon",
-        sizes: "32x32",
-        type: "image/png",
-      },
-      {
-        url: "/torchlife-logo.png",
-        rel: "icon",
-        sizes: "16x16",
-        type: "image/png",
-      },
-    ],
-    shortcut: "/torchlife-logo.png",
-    apple: "/torchlife-logo.png",
+    icon: "/apple-touch-icon.png",
+    shortcut: "/android-chrome-192x192.png",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "TorchLife | Verified Pregnancy Crowdfunding",
