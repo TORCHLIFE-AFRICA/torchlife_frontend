@@ -9,14 +9,27 @@ import { CLOUDINARY_ASSETS } from "@/public/assets/staticImages";
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-linear-to-br from-primary/40 via-primary/30 to-primary/20">
-      <div className="container mx-auto px-4 lg:px-8 py-32 lg:py-20">
+      <div className="container mx-auto px-4 lg:px-8 sm:py-32  lg:py-20">
+        {/* Mobile-only badge (above image) */}
+        <div className="lg:hidden mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <span className="inline-block px-4 py-1.5 text-sm font-medium bg-accent/20 text-amber-50 rounded-full">
+              Africa's first Pregnancy Crowdfunding
+            </span>
+          </motion.div>
+        </div>
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
-          <div className="order-2 lg:order-1">
+          <div className="sm:relative ml-2 absolute z-10 order-2 lg:order-1">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
+              className="hidden lg:block"
             >
               <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium bg-accent/20 text-amber-50 rounded-full">
                 Africa's first Pregnancy Crowdfunding
@@ -27,7 +40,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-background leading-tight text-balance mb-6"
+              className="text-2xl text-shadow-2xs text-shadow-primary md:text-5xl lg:text-6xl font-bold text-background leading-tight text-balance mb-6"
             >
               Every Pregnant Woman Deserves Safe Delivery
             </motion.h1>
@@ -36,9 +49,11 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="text-lg md:text-xl text-background/80 max-w-2xl mb-8 text-pretty"
+              className="text-lg sm:bg-transparent md:text-xl text-background/80 max-w-2xl mb-8 text-pretty"
             >
-              We raise fast funding to start treatment immediately.
+              <span className="bg-accent/20 font-semibold  px-1 box-decoration-clone inline">
+                We raise fast funding to start treatment immediately.
+              </span>
             </motion.p>
 
             <motion.div

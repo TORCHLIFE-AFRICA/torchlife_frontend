@@ -255,7 +255,7 @@ export default function BlogPostPage() {
                 </div>
               </div>
               <div className="ml-auto flex items-center gap-3">
-                <Button
+                {/* <Button
                   variant="ghost"
                   size="icon"
                   className={`${liked ? "text-primary" : ""}`}
@@ -264,8 +264,8 @@ export default function BlogPostPage() {
                   <Heart className={`h-4 w-4 ${liked ? "fill-primary" : ""}`} />
                   <span className="sr-only">Like</span>
                 </Button>
-                <span className="text-sm">{likeCount}</span>
-                <Button
+                <span className="text-sm">{likeCount}</span> */}
+                {/* <Button
                   variant="ghost"
                   size="icon"
                   className={`${bookmarked ? "text-primary" : ""}`}
@@ -275,7 +275,7 @@ export default function BlogPostPage() {
                     className={`h-4 w-4 ${bookmarked ? "fill-primary" : ""}`}
                   />
                   <span className="sr-only">Bookmark</span>
-                </Button>
+                </Button> */}
                 <Button variant="ghost" size="icon">
                   <Share2 className="h-4 w-4" />
                   <span className="sr-only">Share</span>
@@ -308,7 +308,7 @@ export default function BlogPostPage() {
             />
 
             {/* Comments Section */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.7 }}
@@ -321,10 +321,10 @@ export default function BlogPostPage() {
                 </h3>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-6"> */}
                 {/* Sample Comment */}
-                <div className="flex gap-4">
-                  <div className="relative h-10 w-10 rounded-full overflow-hidden flex-shrink-0">
+                {/* <div className="flex gap-4">
+                  <div className="relative h-10 w-10 rounded-full overflow-hidden shrink-0">
                     <Image
                       src="/placeholder-user.jpg"
                       alt="Commenter"
@@ -346,11 +346,11 @@ export default function BlogPostPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Add Comment */}
-                <div className="flex gap-4">
-                  <div className="relative h-10 w-10 rounded-full overflow-hidden flex-shrink-0 bg-muted">
+                {/* <div className="flex gap-4">
+                  <div className="relative h-10 w-10 rounded-full overflow-hidden shrink-0 bg-muted">
                     <span className="absolute inset-0 flex items-center justify-center text-muted-foreground">
                       You
                     </span>
@@ -365,9 +365,9 @@ export default function BlogPostPage() {
                       <Button>Post Comment</Button>
                     </div>
                   </div>
-                </div>
-              </div>
-            </motion.div>
+                </div> */}
+              {/* </div> */}
+            {/* </motion.div> */}
           </div>
         </div>
       </section>
