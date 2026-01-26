@@ -24,7 +24,7 @@ export function HeroSection() {
           </span>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid pb-4 lg:grid-cols-2 gap-5 lg:gap-16 items-center">
           {/* LEFT CONTENT */}
           <div className="relative z-20 order-2 lg:order-1">
             <div className="hidden lg:block mb-6">
@@ -37,7 +37,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-5"
+              className="text-3xl  md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-5"
             >
               Every Pregnant Woman Deserves Safe Delivery
             </motion.h1>
