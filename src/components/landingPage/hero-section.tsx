@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/src/components/ui/button";
@@ -11,41 +12,33 @@ import { CampaignDonationModals } from "../modals/CampaignDonationModals";
 export function HeroSection() {
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [showDonationModal, setShowDonationModal] = useState(false);
+  const router = useRouter();
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-linear-to-br from-primary/40 via-primary/30 to-primary/20">
       <div className="container mx-auto px-4 lg:px-8 sm:py-32  lg:py-20">
         {/* Mobile-only badge (above image) */}
         <div className="lg:hidden mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
+          <div>
             <span className="inline-block px-4 py-1.5 text-sm font-medium bg-accent/20 text-amber-50 rounded-full">
               Africa's first Pregnancy Crowdfunding
             </span>
-          </motion.div>
+          </div>
         </div>
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="sm:relative ml-2 absolute z-10 order-2 lg:order-1">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="hidden lg:block"
-            >
+            <div className="hidden lg:block">
               <span className="inline-block px-4 py-1.5 mb-6 text-sm font-medium bg-accent/20 text-amber-50 rounded-full">
                 Africa's first Pregnancy Crowdfunding
               </span>
-            </motion.div>
+            </div>
 
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-2xl text-shadow-2xs text-shadow-primary md:text-5xl lg:text-6xl font-bold text-background leading-tight text-balance mb-6"
+              className="text-2xl text-shadow-2xs text-shadow-green-950 md:text-5xl lg:text-6xl font-bold text-background leading-tight text-balance mb-6"
             >
               Every Pregnant Woman Deserves Safe Delivery
             </motion.h1>
@@ -88,7 +81,7 @@ export function HeroSection() {
                 <Button
                   size="lg"
                   className="bg-accent hover:bg-accent/90 text-foreground font-semibold px-8 py-6 text-lg"
-                  onClick={() => setShowDonationModal(true)}
+                  onClick={() => router.push("/campaigns  ")}
                 >
                   Donate Now
                 </Button>
@@ -128,15 +121,15 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="order-1 lg:order-2 relative"
           >
-            <motion.div
-              animate={{
-                y: [0, -10, 0],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
+            <div
+              // animate={{
+              //   y: [0, -10, 0],
+              // }}
+              // transition={{
+              //   duration: 4,
+              //   repeat: Number.POSITIVE_INFINITY,
+              //   ease: "easeInOut",
+              // }}
               className="relative aspect-4/5 lg:aspect-3/4 rounded-2xl overflow-hidden shadow-2xl"
             >
               <CloudinaryImage
@@ -160,7 +153,7 @@ export function HeroSection() {
               /> */}
               {/* Subtle overlay for visual cohesion */}
               <div className="absolute inset-0 bg-linear-to-t from-primary/30 to-transparent" />
-            </motion.div>
+            </div>
             <motion.div
               animate={{
                 scale: [1, 1.2, 1],
@@ -189,14 +182,14 @@ export function HeroSection() {
           </motion.div>
         </div>
       </div>
-      
+
       {/* Campaign Modal */}
       <CampaignDonationModals
         open={showCampaignModal}
         onOpenChange={setShowCampaignModal}
         type="campaign"
       />
-      
+
       {/* Donation Modal */}
       <CampaignDonationModals
         open={showDonationModal}
