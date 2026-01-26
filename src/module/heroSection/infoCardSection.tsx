@@ -1,4 +1,4 @@
-import InfoCard from "@/components/card/infoCard";
+// import InfoCard from "@/components/card/infoCard";
 import { Box } from "@mui/material";
 
 export default function InfoCardSection() {
@@ -33,9 +33,9 @@ export default function InfoCardSection() {
         gap: '15px',
       }}
     >
-      {cards.map((card, index) => (
+      {/* {cards.map((card, index) => (
         <InfoCard key={index} {...card} />
-      ))}
+      ))} */}
     </Box>
   );
 }

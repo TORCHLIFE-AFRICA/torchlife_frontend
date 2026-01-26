@@ -21,7 +21,7 @@ const partners = [
   },
   {
     name: "HealthFirst NGO",
-    logo: "/healthcare-ngo-organization-logo.jpg",
+    logo: "/tl.png",
   },
   {
     name: "MedVerify",
@@ -104,9 +104,8 @@ export function PartnersSection() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className={`flex-shrink-0 transition-all duration-300 ${
-                  idx === 0 ? "opacity-50 scale-90" : idx === 1 ? "scale-100" : "opacity-50 scale-90"
-                }`}
+                className={`flex-shrink-0 transition-all duration-300 ${idx === 0 ? "opacity-50 scale-90" : idx === 1 ? "scale-100" : "opacity-50 scale-90"
+                  }`}
               >
                 <div className="flex items-center justify-center h-24 w-32 lg:h-28 lg:w-40 bg-muted/30 rounded-lg p-4 hover:bg-muted/50 transition-colors">
                   <Image
@@ -141,9 +140,8 @@ export function PartnersSection() {
                 setCurrentIndex(index)
                 setIsAutoPlay(false)
               }}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === currentIndex ? "bg-primary w-8" : "bg-muted-foreground/30 w-2 hover:bg-muted-foreground/50"
-              }`}
+              className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-primary w-8" : "bg-muted-foreground/30 w-2 hover:bg-muted-foreground/50"
+                }`}
               whileHover={{ scale: 1.2 }}
               aria-label={`Go to partner ${index + 1}`}
             />

@@ -32,16 +32,15 @@ export function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border" : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border" : "bg-transparent"
+        }`}
     >
       <nav className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/images/torchlifelogo.png"
+              src="/tl.png"
               alt="TorchLife Logo"
               width={200}
               height={56}
@@ -56,9 +55,8 @@ export function Navbar() {
               <motion.div key={item.label} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   href={item.href}
-                  className={`text-sm font-medium transition-colors ${
-                    isScrolled ? "text-foreground/80 hover:text-primary" : "text-white hover:text-white/80"
-                  }`}
+                  className={`text-sm font-medium transition-colors ${isScrolled ? "text-foreground/80 hover:text-primary" : "text-white hover:text-white/80"
+                    }`}
                 >
                   {item.label}
                 </Link>
@@ -70,11 +68,10 @@ export function Navbar() {
           <div className="hidden lg:block">
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
-                className={`font-semibold px-6 transition-colors ${
-                  isScrolled
-                    ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-                    : "bg-white hover:bg-white/90 text-primary"
-                }`}
+                className={`font-semibold px-6 transition-colors ${isScrolled
+                  ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                  : "bg-white hover:bg-white/90 text-primary"
+                  }`}
               >
                 Start a Campaign
               </Button>
