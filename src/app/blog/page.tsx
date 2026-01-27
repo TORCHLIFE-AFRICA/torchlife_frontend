@@ -20,6 +20,7 @@ import Link from "next/link";
 const blogPosts = [
   {
     id: 1,
+    slug: "how-torchlife-is-revolutionizing-maternal-healthcare-funding",
     title: "How TorchLife is Revolutionizing Maternal Healthcare Funding",
     excerpt:
       "Discover how our verification process ensures every campaign reaches those who truly need help.",
@@ -36,6 +37,7 @@ const blogPosts = [
   },
   {
     id: 2,
+    slug: "understanding-the-maternal-healthcare-crisis-in-nigeria",
     title: "Understanding the Maternal Healthcare Crisis in Nigeria",
     excerpt:
       "An in-depth look at the challenges facing expectant mothers and how crowdfunding can help.",
@@ -52,6 +54,7 @@ const blogPosts = [
   },
   {
     id: 3,
+    slug: "5-ways-to-maximize-your-campaign-reach",
     title: "5 Ways to Maximize Your Campaign Reach",
     excerpt:
       "Expert tips on sharing your story and connecting with donors who want to make a difference.",
@@ -68,6 +71,7 @@ const blogPosts = [
   },
   {
     id: 4,
+    slug: "the-power-of-community-how-collective-giving-saves-lives",
     title: "The Power of Community: How Collective Giving Saves Lives",
     excerpt:
       "Stories of how small donations from many people come together to create life-changing impacts.",
@@ -84,6 +88,7 @@ const blogPosts = [
   },
   {
     id: 5,
+    slug: "behind-the-scenes-our-medical-verification-process",
     title: "Behind the Scenes: Our Medical Verification Process",
     excerpt:
       "A transparent look at how we ensure every campaign is legitimate and every donation reaches its intended recipient.",
@@ -100,6 +105,7 @@ const blogPosts = [
   },
   {
     id: 6,
+    slug: "how-technology-is-improving-maternal-health-outcomes",
     title: "How Technology is Improving Maternal Health Outcomes",
     excerpt:
       "Exploring the intersection of technology and healthcare in rural African communities.",
@@ -238,7 +244,7 @@ export default function BlogPage() {
                 whileHover={{ y: -5 }}
                 className="bg-card rounded-xl overflow-hidden border border-border hover:shadow-lg transition-shadow"
               >
-                <Link href={`/blog/${post.id}`}>
+                <Link href={`/blog/${post.slug}`}>
                   <div className="relative h-48 overflow-hidden">
                     <Image
                       src={post.image || "/placeholder.svg"}

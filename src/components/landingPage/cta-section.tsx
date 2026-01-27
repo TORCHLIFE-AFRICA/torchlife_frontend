@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { SectionWrapper } from "./section-wrapper";
 import { Button } from "@/src/components/ui/button";
 import { ArrowRight, Heart, Users } from "lucide-react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CampaignDonationModals } from "../modals/CampaignDonationModals";
 
