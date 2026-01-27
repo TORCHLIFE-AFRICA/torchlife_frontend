@@ -9,6 +9,11 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog";
 import { ArrowRight } from "lucide-react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+
+type DialogContentProps = React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Content
+>;
 
 interface ContactOption {
   title: string;
@@ -24,6 +29,8 @@ interface ContactModalProps {
   description: string;
   options: ContactOption[];
   showCloseButton?: boolean;
+  onPointerDownOutside?: DialogContentProps["onPointerDownOutside"];
+  onEscapeKeyDown?: DialogContentProps["onEscapeKeyDown"];
 }
 
 export function ModalWithLinks({
@@ -33,11 +40,18 @@ export function ModalWithLinks({
   description,
   options,
   showCloseButton = true,
+  onPointerDownOutside,
+  onEscapeKeyDown,
 }: ContactModalProps) {
   const router = useRouter();
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent showCloseButton={showCloseButton} className="sm:max-w-md">
+      <DialogContent
+        onPointerDownOutside={(e) => onPointerDownOutside?.(e)}
+        onEscapeKeyDown={(e) => onEscapeKeyDown?.(e)}
+        showCloseButton={showCloseButton}
+        className="sm:max-w-md"
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
             {title}
