@@ -28,9 +28,17 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-  { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
+  { icon: Twitter, href: "https://x.com/torchlifea?s=21", label: "Twitter" },
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/torchlife_africa?igsh=MTRlaWQ4OHZ3endzbw==",
+    label: "Instagram",
+  },
+  {
+    icon: Linkedin,
+    href: "https://www.linkedin.com/company/torchlife",
+    label: "LinkedIn",
+  },
 ];
 
 export function Footer() {

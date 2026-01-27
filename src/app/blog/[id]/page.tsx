@@ -19,6 +19,7 @@ import { useParams } from "next/navigation";
 const blogPosts = [
   {
     id: 1,
+    slug: "how-torchlife-is-revolutionizing-maternal-healthcare-funding",
     title: "How TorchLife is Revolutionizing Pregnancy Funding",
     excerpt:
       "Discover how our verification process ensures every campaign reaches those who truly need help.",
@@ -72,6 +73,7 @@ const blogPosts = [
   },
   {
     id: 2,
+    slug: "understanding-the-maternal-healthcare-crisis-in-nigeria",
     title: "Understanding the Maternal Healthcare Crisis in Nigeria",
     excerpt:
       "An in-depth look at the challenges facing expectant mothers and how crowdfunding can help.",
@@ -113,6 +115,7 @@ const blogPosts = [
   },
   {
     id: 3,
+    slug: "5-ways-to-maximize-your-campaign-reach",
     title: "5 Ways to Maximize Your Campaign Reach",
     excerpt:
       "Expert tips on sharing your story and connecting with donors who want to make a difference.",
@@ -149,8 +152,8 @@ const blogPosts = [
 
 export default function BlogPostPage() {
   const params = useParams();
-  const id = parseInt(params.id as string);
-  const post = blogPosts.find((p) => p.id === id);
+  const slug = params.id as string;
+  const post = blogPosts.find((p) => p.slug === slug);
 
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(post?.likes || 0);
@@ -322,8 +325,8 @@ export default function BlogPostPage() {
               </div>
 
               <div className="space-y-6"> */}
-                {/* Sample Comment */}
-                {/* <div className="flex gap-4">
+            {/* Sample Comment */}
+            {/* <div className="flex gap-4">
                   <div className="relative h-10 w-10 rounded-full overflow-hidden shrink-0">
                     <Image
                       src="/placeholder-user.jpg"
@@ -348,8 +351,8 @@ export default function BlogPostPage() {
                   </div>
                 </div> */}
 
-                {/* Add Comment */}
-                {/* <div className="flex gap-4">
+            {/* Add Comment */}
+            {/* <div className="flex gap-4">
                   <div className="relative h-10 w-10 rounded-full overflow-hidden shrink-0 bg-muted">
                     <span className="absolute inset-0 flex items-center justify-center text-muted-foreground">
                       You
@@ -366,7 +369,7 @@ export default function BlogPostPage() {
                     </div>
                   </div>
                 </div> */}
-              {/* </div> */}
+            {/* </div> */}
             {/* </motion.div> */}
           </div>
         </div>
