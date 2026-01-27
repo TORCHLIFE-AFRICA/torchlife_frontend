@@ -4,8 +4,13 @@ import { motion } from "framer-motion";
 import { SectionWrapper } from "./section-wrapper";
 import { Button } from "@/src/components/ui/button";
 import { ArrowRight, Heart, Users } from "lucide-react";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { CampaignDonationModals } from "../modals/CampaignDonationModals";
 
 export function CtaSection() {
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
+  const router = useRouter();
   return (
     <SectionWrapper className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 lg:px-8">
@@ -38,6 +43,7 @@ export function CtaSection() {
           >
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
+                onClick={() => setShowCampaignModal(true)}
                 size="lg"
                 className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8 py-6 text-lg"
               >
@@ -47,6 +53,7 @@ export function CtaSection() {
             </motion.div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
+                onClick={() => router.push("/campaigns")}
                 size="lg"
                 variant="outline"
                 className="border-2 border-primary-foreground bg-transparent text-primary-foreground hover:bg-primary-foreground hover:text-primary font-semibold px-8 py-6 text-lg"
@@ -57,6 +64,11 @@ export function CtaSection() {
             </motion.div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
+                onClick={() =>
+                  router.push(
+                    "https://chat.whatsapp.com/LXYK97kPy0CJ8nfQDfc7v9?mode=gi_t",
+                  )
+                }
                 size="lg"
                 variant="ghost"
                 className="text-primary-foreground hover:bg-primary-foreground/10 font-semibold px-8 py-6 text-lg"
@@ -68,6 +80,12 @@ export function CtaSection() {
           </motion.div>
         </div>
       </div>
+      {/* Campaign Modal */}
+      <CampaignDonationModals
+        open={showCampaignModal}
+        onOpenChange={setShowCampaignModal}
+        type="campaign"
+      />
     </SectionWrapper>
   );
 }
