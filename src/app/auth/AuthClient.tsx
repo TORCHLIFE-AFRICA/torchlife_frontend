@@ -125,6 +125,7 @@ export default function AuthClient() {
         title="We're Upgrading Our Platform!"
         description="Thank you for your interest in TorchLife. We're currently enhancing our platform to serve you better. In the meantime, please contact us directly for immediate assistance."
         options={contactOptions}
+        showCloseButton={false}
       />
     </div>
   );

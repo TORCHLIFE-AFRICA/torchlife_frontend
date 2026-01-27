@@ -1,4 +1,5 @@
 import { Button } from "@/src/components/ui/button";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,7 @@ interface ContactModalProps {
   title: string;
   description: string;
   options: ContactOption[];
+  showCloseButton?: boolean;
 }
 
 export function ModalWithLinks({
@@ -30,10 +32,12 @@ export function ModalWithLinks({
   title,
   description,
   options,
+  showCloseButton = true,
 }: ContactModalProps) {
+  const router = useRouter();
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent showCloseButton={showCloseButton} className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center">
             {title}
@@ -68,10 +72,10 @@ export function ModalWithLinks({
         <DialogFooter className="mt-4">
           <Button
             variant="outline"
-            onClick={() => setOpen(false)}
+            onClick={() => router.push("/")}
             className="w-full"
           >
-            Close
+            Home
           </Button>
         </DialogFooter>
       </DialogContent>
