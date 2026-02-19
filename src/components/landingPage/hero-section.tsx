@@ -10,7 +10,6 @@ import { CLOUDINARY_ASSETS } from "@/public/assets/staticImages";
 import { CampaignDonationModals } from "../modals/CampaignDonationModals";
 
 export function HeroSection() {
-  const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [showDonationModal, setShowDonationModal] = useState(false);
   const router = useRouter();
 
@@ -62,7 +61,7 @@ export function HeroSection() {
                 size="lg"
                 variant="outline"
                 className="border-white text-accent hover:bg-white hover:text-black font-semibold px-8 py-6"
-                onClick={() => setShowCampaignModal(true)}
+                onClick={() => router.push('/startcampaigns')}
               >
                 Start a Campaign
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -129,13 +128,6 @@ export function HeroSection() {
           </motion.div>
         </div>
       </div>
-
-      {/* Campaign Modal */}
-      <CampaignDonationModals
-        open={showCampaignModal}
-        onOpenChange={setShowCampaignModal}
-        type="campaign"
-      />
 
       {/* Donation Modal */}
       <CampaignDonationModals

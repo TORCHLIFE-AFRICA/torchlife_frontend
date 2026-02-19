@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CloudinaryImage } from "../ui/clodinary-image";
 import { CLOUDINARY_ASSETS } from "@/public/assets/staticImages";
 import { CampaignDonationModals } from "../modals/CampaignDonationModals";
@@ -19,7 +20,7 @@ const navItems = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showCampaignModal, setShowCampaignModal] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -112,7 +113,7 @@ export function Navbar() {
               >
                 <Button
                   className={`font-semibold px-6 transition-colors ${isScrolled ? "bg-primary hover:bg-primary/90 text-primary-foreground" : "bg-white hover:bg-white/90 text-primary"}`}
-                  onClick={() => setShowCampaignModal(true)}
+                  onClick={() => router.push('/startcampaigns')}
                 >
                   Start a Campaign
                 </Button>
@@ -193,7 +194,7 @@ export function Navbar() {
                   <Button
                     className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
                     onClick={() => {
-                      setShowCampaignModal(true);
+                      router.push('/startcampaigns');
                       setIsMobileMenuOpen(false);
                     }}
                   >
@@ -206,12 +207,6 @@ export function Navbar() {
         </AnimatePresence>
       </nav>
 
-      {/* Campaign Modal */}
-      <CampaignDonationModals
-        open={showCampaignModal}
-        onOpenChange={setShowCampaignModal}
-        type="campaign"
-      />
     </motion.header>
   );
 }

@@ -9,7 +9,6 @@ import { useState } from "react";
 import { CampaignDonationModals } from "../modals/CampaignDonationModals";
 
 export function CtaSection() {
-  const [showCampaignModal, setShowCampaignModal] = useState(false);
   const router = useRouter();
   return (
     <SectionWrapper className="bg-primary text-primary-foreground">
@@ -43,7 +42,7 @@ export function CtaSection() {
           >
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
-                onClick={() => setShowCampaignModal(true)}
+                onClick={() => router.push('/startcampaigns')}
                 size="lg"
                 className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-8 py-6 text-lg"
               >
@@ -80,12 +79,6 @@ export function CtaSection() {
           </motion.div>
         </div>
       </div>
-      {/* Campaign Modal */}
-      <CampaignDonationModals
-        open={showCampaignModal}
-        onOpenChange={setShowCampaignModal}
-        type="campaign"
-      />
     </SectionWrapper>
   );
 }
