@@ -1,7 +1,5 @@
-export default function StartCampaigns() {
-  return(
-    <>
-    
-    </>
-  );
+import { CampaignWizard } from '@/src/components/startcampaign'
+
+export default function StartCampaignsPage() {
+  return <CampaignWizard />
 }
