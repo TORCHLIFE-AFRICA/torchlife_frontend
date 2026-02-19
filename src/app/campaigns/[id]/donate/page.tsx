@@ -2,21 +2,21 @@
 
 import { Navbar } from "@/src/components/landingPage/navbar";
 import { Footer } from "@/src/components/landingPage/footer";
-import { CampaignDetails } from "@/src/components/campaigns";
-import { mockCampaignDetail, mockCampaigns, type CampaignDetail } from "@/src/types/donation";
+import { DonationForm } from "@/src/components/campaigns";
+import { mockCampaigns, type CampaignDetail } from "@/src/types/donation";
 import { useParams } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export default function CampaignDetailPage() {
+export default function DonatePage() {
   const params = useParams();
   const campaignId = params.id as string;
 
   // Find campaign by id from mock data
   const baseCampaign = mockCampaigns.find((c) => c.id === campaignId);
 
-  // Create full campaign detail (in production, this would come from API)
+  // Create full campaign detail
   const campaign: CampaignDetail | null = baseCampaign
     ? {
         ...baseCampaign,
@@ -57,7 +57,7 @@ export default function CampaignDetailPage() {
       <Navbar />
       <section className="py-12 md:py-24">
         <div className="container mx-auto px-4 lg:px-8">
-          <CampaignDetails campaign={campaign} />
+          <DonationForm campaign={campaign} />
         </div>
       </section>
       <Footer />
