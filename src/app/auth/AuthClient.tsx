@@ -7,30 +7,21 @@ import { Navbar } from "@/src/components/landingPage/navbar";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
-import { useSearchParams } from "next/navigation";
-import { Mail, Phone } from "lucide-react";
-import { ModalWithLinks } from "@/src/components/ui/modal-with-links";
-
-const contactOptions = [
-  {
-    title: "WhatsApp Support",
-    description: "Chat with our team directly",
-    icon: <Phone className="h-6 w-6 text-primary-foreground" />,
-    action: () => window.open("https://wa.me/2347069014391", "_blank"),
-  },
-  {
-    title: "Email Us",
-    description: "Send us a detailed message",
-    icon: <Mail className="h-6 w-6 text-primary-foreground" />,
-    action: () => (window.location.href = "mailto:info@torchlife.org"),
-  },
-];
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 export default function AuthClient() {
   const [isSignUp, setIsSignUp] = useState(true);
-  const [showContactModal, setShowContactModal] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const { login, register, isAuthenticated, isLoading } = useAuth();
   const signIn = searchParams.get("auth");
 
   useEffect(() => {
@@ -40,16 +31,43 @@ export default function AuthClient() {
   }, [signIn]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowContactModal(true);
-    }, 4000);
+    if (!isLoading && isAuthenticated) {
+      router.replace("/dashboard");
+    }
+  }, [isAuthenticated, isLoading, router]);
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowContactModal(true);
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      if (isSignUp) {
+        if (password !== confirmPassword) {
+          throw new Error("Passwords do not match.");
+        }
+        await register({
+          name,
+          email,
+          password,
+          confirmPassword,
+        });
+        window.alert("Account created successfully. Please sign in to continue.");
+        setIsSignUp(false);
+        router.replace("/auth?auth=signIn");
+        return;
+      } else {
+        await login(email, password);
+        router.replace("/dashboard");
+      }
+    } catch (submitError) {
+      const message =
+        submitError instanceof Error
+          ? submitError.message
+          : "Authentication failed. Please try again.";
+      setError(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -96,43 +114,66 @@ export default function AuthClient() {
                 {isSignUp && (
                   <div>
                     <Label>Full Name</Label>
-                    <Input />
+                    <Input
+                      required
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                    />
                   </div>
                 )}
 
                 <div>
                   <Label>Email</Label>
-                  <Input type="email" />
+                  <Input
+                    required
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                  />
                 </div>
 
                 <div>
                   <Label>Password</Label>
-                  <Input type="password" />
+                  <Input
+                    required
+                    type="password"
+                    minLength={8}
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                  />
                 </div>
 
-                <Button className="w-full">
-                  {isSignUp ? "Create Account" : "Sign In"}
+                {isSignUp ? (
+                  <div>
+                    <Label>Confirm Password</Label>
+                    <Input
+                      required
+                      type="password"
+                      minLength={8}
+                      value={confirmPassword}
+                      onChange={(event) => setConfirmPassword(event.target.value)}
+                    />
+                  </div>
+                ) : null}
+
+                {error ? (
+                  <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                    {error}
+                  </p>
+                ) : null}
+
+                <Button className="w-full" disabled={isSubmitting || isLoading}>
+                  {isSubmitting
+                    ? "Please wait..."
+                    : isSignUp
+                      ? "Create Account"
+                      : "Sign In"}
                 </Button>
               </form>
             </div>
           </motion.div>
         </div>
       </section>
-
-      <ModalWithLinks
-        open={showContactModal}
-        setOpen={setShowContactModal}
-        title="We're Upgrading Our Platform!"
-        description="Thank you for your interest in TorchLife. We're currently enhancing our platform to serve you better. In the meantime, please contact us directly for immediate assistance."
-        options={contactOptions}
-        showCloseButton={false}
-        onPointerDownOutside={(e) => {
-          e.preventDefault();
-        }}
-        onEscapeKeyDown={(e) => {
-          e.preventDefault();
-        }}
-      />
     </div>
   );
 }
