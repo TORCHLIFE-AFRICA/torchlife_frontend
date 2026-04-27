@@ -1,4 +1,8 @@
+import Image from "next/image";
+import Link from "next/link";
+
 import type { FooterGroup } from "@/src/components/dashboard/types";
+import logo from "@/public/torchlifelogo.png";
 
 type FooterProps = {
   groups: FooterGroup[];
@@ -24,8 +28,13 @@ export default function Footer({ groups }: FooterProps) {
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-2 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2010-2026 GoFundMe</p>
+        <div className="flex flex-col gap-3 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/">
+              <Image src={logo} alt="TorchLife Africa" width={100} height={40} />
+            </Link>
+            <p>© 2010-2026 TorchLife Africa</p>
+          </div>
           <div className="flex flex-wrap items-center gap-4">
             <a href="#" className="transition-colors hover:text-foreground">
               Terms

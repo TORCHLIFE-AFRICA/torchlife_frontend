@@ -64,7 +64,7 @@ const footerGroups: FooterGroup[] = [
   {
     id: "learn",
     title: "Learn more",
-    links: ["How GoFundMe works", "Success stories", "Charity fundraising", "Pricing"],
+    links: ["How TorchLife Africa works", "Success stories", "Charity fundraising", "Pricing"],
   },
   { id: "resources", title: "Resources", links: ["Help center", "Blog", "Careers", "About"] },
   { id: "apps", title: "Get the app", links: ["iOS App Store", "Android Play Store"] },
