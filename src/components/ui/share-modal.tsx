@@ -9,6 +9,7 @@ import {
 } from "@/src/components/ui/dialog";
 import { Twitter, Facebook, Linkedin, Copy } from "lucide-react";
 import { useState } from "react";
+import { notifySuccess } from "@/src/lib/notify";
 
 interface SocialShareOption {
   name: string;
@@ -64,7 +65,7 @@ export function ShareModal({
   const handleShare = (option: SocialShareOption) => {
     if (option.name === "Copy Link") {
       navigator.clipboard.writeText(campaignLink);
-      alert("Link copied to clipboard!");
+      notifySuccess("Link copied", "Campaign link copied to clipboard.");
       return;
     }
     const url = option.urlTemplate(

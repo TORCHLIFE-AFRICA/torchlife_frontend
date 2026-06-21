@@ -17,12 +17,12 @@ export default function DonationsFilters({
     <section className="rounded-2xl border bg-card p-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="flex flex-col gap-1 text-sm">
-          <span className="text-muted-foreground">Organization</span>
+          <span className="text-muted-foreground">Campaign</span>
           <input
             type="text"
             value={organizationFilter}
             onChange={(event) => onOrganizationFilterChange(event.target.value)}
-            placeholder="Search organization"
+            placeholder="Search campaign"
             className="h-9 rounded-md border bg-background px-3 outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
           />
         </label>

@@ -99,13 +99,12 @@ export default function DonationsTable({
                   <button
                     type="button"
                     className="inline-flex items-center gap-1"
-                    onClick={() => onSortChange("organization")}
+                    onClick={() => onSortChange("campaignName")}
                   >
-                    Recipient organization
+                    Campaign
                     <ArrowUpDown className="size-3.5" />
                   </button>
                 </TableHead>
-                <TableHead>Payment method</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -114,8 +113,14 @@ export default function DonationsTable({
                 <TableRow key={row.id}>
                   <TableCell>{row.date.toLocaleDateString()}</TableCell>
                   <TableCell className="font-medium">{formatAmount(row.amount)}</TableCell>
-                  <TableCell>{row.organization}</TableCell>
-                  <TableCell>{row.paymentMethod}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span>{row.campaignName}</span>
+                      {row.anonymous ? (
+                        <span className="text-xs text-muted-foreground">Anonymous donation</span>
+                      ) : null}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <Badge variant={statusBadgeVariant(row.status)}>
                       {row.status.toLowerCase()}

@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { Button } from "@/src/components/ui/button";
@@ -57,11 +57,26 @@ export default function Sidebar({
 
       <aside
         className={cn(
-          "hidden h-[calc(100vh-4rem)] shrink-0 border-r bg-background transition-all duration-300 md:block",
+          "hidden shrink-0 border-r bg-background transition-all duration-300 md:sticky md:top-16 md:block md:h-[calc(100vh-4rem)]",
           isDesktopCollapsed ? "w-24" : "w-64"
         )}
       >
-        <div className="flex h-full flex-col pt-6">
+        <div className="flex h-full flex-col overflow-hidden pt-6">
+          <div className="mb-4 flex justify-end px-3">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={onToggleDesktopCollapse}
+              aria-label={isDesktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isDesktopCollapsed ? (
+                <PanelLeftOpen className="size-4" />
+              ) : (
+                <PanelLeftClose className="size-4" />
+              )}
+            </Button>
+          </div>
           <SidebarNav
             items={items}
             activeItem={activeItem}
@@ -82,39 +97,65 @@ type SidebarNavProps = {
 };
 
 function SidebarNav({ items, activeItem, onSelectItem, compact }: SidebarNavProps) {
-  return (
-    <nav className="space-y-2 px-3">
-      {items.map((item) => {
-        const isActive = item.id === activeItem;
-        const isTransfer = item.id === "transfers";
-        const Icon = item.icon;
+  const footerItem = items.find((item) => item.id === "logout");
+  const primaryItems = items.filter((item) => item.id !== "logout");
 
-        return (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onSelectItem(item.id)}
-            className={cn(
-              "group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors duration-200",
-              isActive ? "font-semibold text-foreground" : "text-foreground/80 hover:text-foreground",
-              compact && "justify-center px-2"
-            )}
-          >
-            <span
+  return (
+    <nav className="flex h-full flex-col gap-6 overflow-y-auto px-3 pb-6">
+      <div className="space-y-2">
+        {primaryItems.map((item) => {
+          const isActive = item.id === activeItem;
+          const Icon = item.icon;
+
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => onSelectItem(item.id)}
               className={cn(
-                "relative inline-flex size-8 items-center justify-center rounded-full border",
-                isActive
-                  ? "border-emerald-200 bg-emerald-100 text-emerald-600"
-                  : "border-muted-foreground/15 bg-background text-muted-foreground"
+                "group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors duration-200",
+                isActive ? "font-semibold text-foreground" : "text-foreground/80 hover:text-foreground",
+                compact && "justify-center px-2"
               )}
             >
-              <Icon className="size-4 shrink-0" />
-              {isTransfer ? <span className="absolute right-0 top-0 size-2 rounded-full bg-rose-500" /> : null}
-            </span>
-            <span className={cn("truncate", compact && "hidden")}>{item.label}</span>
-          </button>
-        );
-      })}
+              <span
+                className={cn(
+                  "relative inline-flex size-8 items-center justify-center rounded-full border",
+                  isActive
+                    ? "border-emerald-200 bg-emerald-100 text-emerald-600"
+                    : "border-muted-foreground/15 bg-background text-muted-foreground"
+                )}
+              >
+                <Icon className="size-4 shrink-0" />
+              </span>
+              <span className={cn("truncate", compact && "hidden")}>{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {footerItem ? (
+        <div className="mt-auto border-t pt-4">
+          {(() => {
+            const Icon = footerItem.icon;
+            return (
+              <button
+                type="button"
+                onClick={() => onSelectItem(footerItem.id)}
+                className={cn(
+                  "group flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-destructive transition-colors duration-200 hover:bg-destructive/5",
+                  compact && "justify-center px-2"
+                )}
+              >
+                <span className="relative inline-flex size-8 items-center justify-center rounded-full border border-destructive/20 bg-destructive/10 text-destructive">
+                  <Icon className="size-4 shrink-0" />
+                </span>
+                <span className={cn("truncate", compact && "hidden")}>{footerItem.label}</span>
+              </button>
+            );
+          })()}
+        </div>
+      ) : null}
     </nav>
   );
 }

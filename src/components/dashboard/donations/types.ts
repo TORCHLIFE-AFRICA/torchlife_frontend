@@ -1,19 +1,19 @@
 import type { PaymentStatus } from "@/src/types";
 
-export type SortKey = "date" | "amount" | "organization";
+export type SortKey = "date" | "amount" | "campaignName";
 export type SortDirection = "asc" | "desc";
 
 export type DonationRow = {
   id: string;
   amount: number;
   date: Date;
-  organization: string;
-  paymentMethod: string;
+  campaignName: string;
   status: PaymentStatus;
+  anonymous: boolean;
 };
 
 export type DonationSummary = {
   totalAmount: number;
   average: number;
-  organizationsCount: number;
+  campaignsSupported: number;
 };

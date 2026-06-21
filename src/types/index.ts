@@ -2,48 +2,146 @@
 export interface User {
   id: string;
   email: string;
-  name: string;
   role: UserRole;
-  avatar?: string;
+  firstName: string;
+  lastName: string;
+  philanthropicName?: string;
+  phoneNumber?: string;
+  avatarUrl?: string | null;
+  impactScore?: number;
+  emergenciesSupported?: number;
   isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export enum UserRole {
-  CREATOR = "CREATOR",
-  BACKER = "BACKER",
   ADMIN = "ADMIN",
-  MODERATOR = "MODERATOR",
+  SUPER_ADMIN = "SUPER_ADMIN",
+  USER = "USER",
+  PROXY = "PROXY",
 }
 
 export interface Campaign {
   id: string;
+  publicId?: string;
+  type?: "USER" | "PROXY";
   title: string;
-  description: string;
-  shortDescription: string;
-  fundingGoal: number;
-  currentAmount: number;
+  story?: string;
+  description?: string;
+  shortDescription?: string;
+  fundingGoal?: number;
+  currentAmount?: number;
   status: CampaignStatus;
-  category: CampaignCategory;
-  creator: User;
-  creatorId: string;
-  images: string[];
+  extensionStatus?: "NONE" | "PENDING" | "APPROVED" | "REJECTED";
+  requestedDeadline?: Date;
+  category?: CampaignCategory;
+  creator?: User;
+  creatorId?: string;
+  user?: User;
+  verifiedBy?: User;
+  images?: string[];
+  imageUrl?: string;
+  image_url?: string;
   video?: string;
-  rewards: RewardTier[];
-  backers: number;
+  rewards?: RewardTier[];
+  backers?: number;
+  donorCount?: number;
   createdAt: Date;
   updatedAt: Date;
-  endDate: Date;
-  tags: string[];
+  endDate?: Date;
+  deadline?: Date;
+  tags?: string[];
+  targetAmount?: number;
+  amountRaised?: number;
+  currency?: string;
+  proxyName?: string | null;
+  proxyNote?: string | null;
+  proxyPhone?: string | null;
+  proxyEmail?: string | null;
+  proxyOrganization?: string | null;
+  proxyCampaignCount?: number | null;
+  proxyTotalRaised?: number | null;
+  location?: string | null;
+  hospitalName?: string | null;
+  hospitalContact?: string | null;
+  hospitalContactPersonName?: string | null;
+  priority?: string | null;
+  records?: string[];
+  certifiedPdf?: string;
+  approvedAt?: Date;
+  approvalNotes?: string | null;
+  approvedById?: string | null;
+  isDeleted?: boolean;
+  deletedAt?: Date;
+}
+
+export interface SupportingDocumentRequest {
+  id: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  requestedAt: Date;
+  reviewedAt?: Date;
+  reviewedById?: string | null;
+  campaign?: {
+    id: string;
+    publicId?: string;
+    title: string;
+  };
+  user?: {
+    id: string;
+    philanthropicName?: string;
+    email?: string;
+  };
+  reviewedBy?: {
+    id: string;
+    philanthropicName?: string;
+    email?: string;
+  };
+}
+
+export interface CampaignExtensionAuditEntry {
+  id: string;
+  oldDeadline: Date;
+  newDeadline: Date;
+  createdAt: Date;
+  admin?: {
+    id: string;
+    philanthropicName?: string;
+    email?: string;
+  };
+}
+
+export interface AdminUserDirectoryEntry {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  avatarUrl?: string | null;
+  role: UserRole;
+  createdAt: Date;
+  philanthropicName?: string;
+  impactScore: number;
+  donationCount: number;
+  campaignCount: number;
+}
+
+export interface AdminMetrics {
+  totalUsers: number;
+  totalCampaigns: number;
+  approvedCampaigns: number;
+  pendingCampaigns: number;
+  rejectedCampaigns: number;
+  expiredCampaigns: number;
+  totalDonations: number;
+  documentRequests: number;
+  proxyAccounts: number;
 }
 
 export enum CampaignStatus {
-  DRAFT = "DRAFT",
-  LIVE = "LIVE",
-  FUNDED = "FUNDED",
-  CANCELLED = "CANCELLED",
-  COMPLETED = "COMPLETED",
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
 }
 
 export enum CampaignCategory {
@@ -71,16 +169,19 @@ export interface RewardTier {
 export interface Payment {
   id: string;
   amount: number;
-  status: PaymentStatus;
-  campaign: Campaign;
-  campaignId: string;
-  backer: User;
-  backerId: string;
+  status: PaymentStatus | string;
+  campaign?: Campaign;
+  campaignId?: string;
+  backer?: User;
+  backerId?: string;
   rewardTier?: RewardTier;
   rewardTierId?: string;
   stripePaymentIntentId?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  reference?: string;
+  authorizationUrl?: string;
+  currency?: string;
 }
 
 export enum PaymentStatus {
@@ -108,15 +209,19 @@ export interface CampaignFormData {
 export interface PaymentData {
   campaignId: string;
   amount: number;
+  donorEmail?: string;
+  confirmDonorEmail?: string;
   rewardTierId?: string;
-  paymentMethodId: string;
+  paymentMethodId?: string;
 }
 
 export interface AuthFormData {
   email: string;
   password: string;
-  name?: string;
-  confirmPassword?: string;
+  firstName: string;
+  lastName: string;
+  philanthropicName: string;
+  phoneNumber: string;
 }
 
 // Context types
@@ -124,10 +229,11 @@ export interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: AuthFormData) => Promise<void>;
-  logout: () => void;
-  updateProfile: (data: Partial<User>) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  loginWithGoogle: (credential: string) => Promise<User>;
+  register: (data: AuthFormData) => Promise<User>;
+  refreshMe: () => Promise<User>;
+  logout: () => Promise<void>;
 }
 
 export interface CampaignContextType {
@@ -172,12 +278,10 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> {
   data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 export interface CampaignFilters {

@@ -2,7 +2,9 @@ import type { Payment } from "@/src/types";
 
 export function getOrganization(payment: Payment) {
   return (
-    payment.campaign?.creator?.name ||
+    (payment.campaign?.creator
+      ? `${payment.campaign.creator.firstName} ${payment.campaign.creator.lastName}`.trim()
+      : "") ||
     payment.campaign?.title ||
     "Unknown organization"
   );
