@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import PublicCampaignRoute from "@/src/modules/campaign/components/PublicCampaignRoute";
 import { getServerCampaign } from "@/src/lib/api/server-campaigns";
+import { getPublicBaseUrl } from "@/src/lib/site-url";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://torchlife.vercel.app";
+const siteUrl = getPublicBaseUrl();
 
 function getCampaignDescription(story?: string) {
   const normalizedStory = story?.replace(/\s+/g, " ").trim();

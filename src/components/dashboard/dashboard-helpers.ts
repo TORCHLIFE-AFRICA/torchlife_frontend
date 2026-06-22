@@ -1,4 +1,5 @@
 import type { Campaign } from "@/src/types";
+import { getPublicUrl } from "@/src/lib/site-url";
 
 export type DashboardCampaignStatus =
   | "Active"
@@ -61,9 +62,7 @@ export const getCampaignDisplayStatus = (
 };
 
 export const getCampaignLink = (campaignId: string, publicId?: string) =>
-  typeof window === "undefined"
-    ? `/campaign/${publicId || campaignId}`
-    : `${window.location.origin}/campaign/${publicId || campaignId}`;
+  getPublicUrl(`/campaign/${publicId || campaignId}`);
 
 export const getCampaignPath = (campaignId: string, publicId?: string) =>
   `/campaign/${publicId || campaignId}`;

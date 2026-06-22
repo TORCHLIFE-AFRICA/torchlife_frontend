@@ -20,7 +20,7 @@ export function HeroSection() {
         {/* Mobile-only badge (above image) */}
         <div className="lg:hidden mb-6">
           <span className="inline-block px-4 py-1.5 text-sm font-medium bg-accent/30 text-white rounded-full backdrop-blur">
-            Africa's first Pregnancy Crowdfunding
+            Africa's first Pregnancy Crowdfunding...
           </span>
         </div>
 
@@ -29,7 +29,7 @@ export function HeroSection() {
           <div className="relative z-20 order-2 lg:order-1">
             <div className="hidden lg:block mb-6">
               <span className="inline-block px-4 py-1.5 text-sm font-medium bg-accent/30 text-white rounded-full backdrop-blur">
-                Africa's first Pregnancy Crowdfunding
+                Africa's first Pregnancy Crowdfunding...
               </span>
             </div>
 

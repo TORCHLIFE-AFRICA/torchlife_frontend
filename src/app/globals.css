@@ -133,3 +133,18 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes landing-chip-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+.landing-chip-float {
+  animation: landing-chip-float 6.8s ease-in-out infinite;
+  will-change: transform;
+}

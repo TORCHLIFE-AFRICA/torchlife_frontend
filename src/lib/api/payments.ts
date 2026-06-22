@@ -1,5 +1,6 @@
 import { apiClient } from "./client";
 import { PaymentData, PaymentStatus } from "@/src/types";
+import { getPublicUrl } from "@/src/lib/site-url";
 
 export interface PaystackInitializeResponse {
   donationId: string;
@@ -151,7 +152,7 @@ export const paymentApi = {
   ): Promise<PaystackInitializeResponse> {
     const callbackUrl =
       data.callbackUrl ||
-      (typeof window !== "undefined" ? `${window.location.origin}/payments/callback` : undefined);
+      (typeof window !== "undefined" ? getPublicUrl("/payments/callback") : undefined);
     const response = await apiClient.post<PaystackInitializeResponse>(
       "/payments/paystack/initialize",
       {

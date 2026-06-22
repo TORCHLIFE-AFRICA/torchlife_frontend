@@ -65,10 +65,10 @@ export function Footer() {
               <p>
                 <span className="font-medium text-background">Email:</span>{" "}
                 <a
-                  href="mailto:info@torchlife.org"
+                  href="mailto:info@torchlife.co"
                   className="hover:text-accent transition-colors"
                 >
-                  info@torchlife.org
+                  info@torchlife.co
                 </a>
               </p>
               <p>

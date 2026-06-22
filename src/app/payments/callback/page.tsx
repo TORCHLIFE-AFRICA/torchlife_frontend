@@ -20,6 +20,7 @@ import {
 } from "@/src/components/ui/dialog";
 import { paymentApi, type PaystackVerifyResponse } from "@/src/lib/api/payments";
 import { notifyError, notifySuccess } from "@/src/lib/notify";
+import { getPublicUrl } from "@/src/lib/site-url";
 import { useAuth } from "@/src/contexts/AuthContext";
 
 const formatMoney = (value: number, currency = "NGN") =>
@@ -305,10 +306,10 @@ function PaymentCallbackContent() {
   }, [result?.campaignId, result?.campaignPublicId]);
 
   const campaignUrl = useMemo(() => {
-    if (!campaignPath || typeof window === "undefined") {
+    if (!campaignPath) {
       return "";
     }
-    return `${window.location.origin}${campaignPath}`;
+    return getPublicUrl(campaignPath);
   }, [campaignPath]);
 
   const philanthropicName = useMemo(() => {
@@ -393,7 +394,7 @@ function PaymentCallbackContent() {
         }
 
         const [logo, qrCode] = await Promise.all([
-          loadImage(`${window.location.origin}/torchlife-logo.png`),
+          loadImage(getPublicUrl("/torchlife-logo.png")),
           QRCode.toDataURL(campaignUrl, {
             width: 220,
             margin: 1,

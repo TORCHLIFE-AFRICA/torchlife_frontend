@@ -5,10 +5,10 @@ import Link from "next/link";
 import { Eye, RefreshCw } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert";
-import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/empty-state";
+import { CampaignImage } from "@/src/components/shared/CampaignImage";
 import { Spinner } from "@/src/components/ui/spinner";
 import { useInfiniteScroll } from "@/src/hooks/use-infinite-scroll";
 import { campaignApi } from "@/src/lib/api/campaigns";
@@ -33,6 +33,30 @@ const metricCards: Array<keyof AdminMetrics> = [
   "documentRequests",
   "proxyAccounts",
 ];
+
+const campaignThemes = [
+  {
+    outer: "bg-[linear-gradient(180deg,#7a1f17_0%,#b1362a_100%)]",
+    shell: "bg-[#fbf4ef]",
+    badge: "bg-[#cf4435] text-white",
+    progress: "bg-[#cf4435]",
+    button: "bg-[#8a6607] hover:bg-[#775807] text-white",
+  },
+  {
+    outer: "bg-[linear-gradient(180deg,#13463f_0%,#18675c_100%)]",
+    shell: "bg-[#f3f8f6]",
+    badge: "bg-[#0f766e] text-white",
+    progress: "bg-[#0f766e]",
+    button: "bg-[#8a6607] hover:bg-[#775807] text-white",
+  },
+  {
+    outer: "bg-[linear-gradient(180deg,#5b4a11_0%,#8f771d_100%)]",
+    shell: "bg-[#f8f5e8]",
+    badge: "bg-[#8f771d] text-white",
+    progress: "bg-[#8f771d]",
+    button: "bg-[#8a6607] hover:bg-[#775807] text-white",
+  },
+] as const;
 
 export default function AdminContent({ searchQuery }: AdminContentProps) {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -166,59 +190,95 @@ export default function AdminContent({ searchQuery }: AdminContentProps) {
           description="No campaigns matched the current admin search."
         />
       ) : (
-        <div className="grid gap-6">
-          {campaigns.map((campaign) => {
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {campaigns.map((campaign, index) => {
             const ownerName = getCampaignOwnerName(campaign);
             const isProxyCampaign = campaign.proxyName || campaign.proxyEmail || campaign.proxyPhone;
+            const theme = campaignThemes[index % campaignThemes.length];
 
             return (
-              <Card key={campaign.id} className="overflow-hidden rounded-3xl">
-                <CardContent className="grid gap-5 p-5 lg:grid-cols-[220px_1fr]">
-                  <img
-                    src={campaign.imageUrl || campaign.image_url || "/torchlife-logo.png"}
-                    alt={campaign.title}
-                    className="h-44 w-full rounded-2xl object-cover"
-                  />
-                  <div className="space-y-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div className="space-y-1">
-                        <h2 className="text-xl font-semibold">{campaign.title}</h2>
-                        <p className="text-sm text-muted-foreground">
-                          Owner: <span className="font-medium text-foreground">{ownerName}</span>
-                        </p>
-                      </div>
-                      <Badge variant="outline">{campaign.status}</Badge>
-                    </div>
-
-                    <div className="grid gap-3 rounded-2xl border bg-muted/20 p-4 text-sm md:grid-cols-2 xl:grid-cols-4">
-                      <p>Raised: {formatMoney(campaign.amountRaised ?? 0, campaign.currency)}</p>
-                      <p>Target: {formatMoney(campaign.targetAmount ?? 0, campaign.currency)}</p>
-                      <p>Hospital: {campaign.hospitalName || campaign.location || "Not provided"}</p>
-                      <p>Created: {campaign.createdAt.toLocaleDateString()}</p>
-                    </div>
-
-                    {isProxyCampaign ? (
-                      <div className="grid gap-3 rounded-2xl border border-primary/15 bg-primary/5 p-4 text-sm md:grid-cols-2 xl:grid-cols-3">
-                        <p>Proxy Name: {campaign.proxyName || "Not provided"}</p>
-                        <p>Proxy Email: {campaign.proxyEmail || "Not provided"}</p>
-                        <p>Proxy Phone: {campaign.proxyPhone || "Not provided"}</p>
-                        <p>Proxy Organization: {campaign.proxyOrganization || "Not provided"}</p>
-                        <p>Total Proxy Campaign Count: {campaign.proxyCampaignCount ?? 0}</p>
-                        <p>
-                          Proxy Total Raised: {formatMoney(campaign.proxyTotalRaised ?? 0, campaign.currency)}
-                        </p>
-                      </div>
-                    ) : null}
-
+              <article
+                key={campaign.id}
+                className={`rounded-[1.55rem] p-1 shadow-[0_26px_80px_-36px_rgba(8,28,25,0.45)] transition-transform duration-300 hover:-translate-y-1 ${theme.outer}`}
+              >
+                <div className={`rounded-[1.35rem] p-2 sm:rounded-[1.7rem] sm:p-3 ${theme.shell}`}>
+                  <div className="overflow-hidden rounded-[1.1rem] border border-black/5 bg-white sm:rounded-[1.35rem]">
                     <Link href={getDashboardCampaignLink(campaign.id)} className="block">
-                      <Button variant="outline" className="w-full gap-2">
-                        <Eye className="size-4" />
-                        View campaign detail
-                      </Button>
+                      <div className="relative aspect-[5/4] overflow-hidden">
+                        <CampaignImage
+                          src={campaign.imageUrl || campaign.image_url}
+                          alt={campaign.title}
+                          wrapperClassName="h-full w-full"
+                          imageClassName="transition-transform duration-500 hover:scale-[1.03]"
+                        />
+                        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
+                          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${theme.badge}`}>
+                            {campaign.status}
+                          </span>
+                          <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-[#0f766e] shadow-sm">
+                            {campaign.createdAt.toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
                     </Link>
+
+                    <div className="space-y-3 p-3 sm:space-y-5 sm:p-5">
+                      <div>
+                        <h2 className="line-clamp-2 text-[1.35rem] font-semibold leading-tight tracking-tight text-[#132726] sm:text-[1.8rem]">
+                          {campaign.title}
+                        </h2>
+                        <p className="mt-1.5 text-[13px] leading-5 text-[#485f5b] sm:text-sm sm:leading-6">
+                          Owner: <span className="font-medium text-[#132726]">{ownerName}</span>
+                        </p>
+                        <p className="text-[13px] leading-5 text-[#485f5b] sm:text-sm sm:leading-6">
+                          Hospital: {campaign.hospitalName || campaign.location || "Not provided"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <div className="flex items-end justify-between gap-3">
+                          <div>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#70837f]">
+                              Raised
+                            </p>
+                            <p className="mt-1 text-[1.35rem] font-semibold tracking-tight text-[#0f4d46] sm:text-3xl">
+                              {formatMoney(campaign.amountRaised ?? 0, campaign.currency)}
+                            </p>
+                          </div>
+                          <p className="text-xs font-medium text-[#556a66] sm:text-sm">
+                            Goal {formatMoney(campaign.targetAmount ?? 0, campaign.currency)}
+                          </p>
+                        </div>
+                      </div>
+
+                      {isProxyCampaign ? (
+                        <div className="grid gap-2 rounded-2xl border border-[#d8c8a7] bg-[#faf4e7] p-3 text-[13px] text-[#485f5b] sm:text-sm">
+                          <p>Proxy Name: {campaign.proxyName || "Not provided"}</p>
+                          <p>Proxy Email: {campaign.proxyEmail || "Not provided"}</p>
+                          <p>Proxy Phone: {campaign.proxyPhone || "Not provided"}</p>
+                          <p>Organization: {campaign.proxyOrganization || "Not provided"}</p>
+                          <p>Proxy Campaign Count: {campaign.proxyCampaignCount ?? 0}</p>
+                          <p>
+                            Proxy Total Raised: {formatMoney(campaign.proxyTotalRaised ?? 0, campaign.currency)}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid gap-2 rounded-2xl border border-black/5 bg-white/80 p-3 text-[13px] text-[#485f5b] sm:text-sm">
+                          <p>Status: {campaign.status}</p>
+                          <p>Campaign Type: {campaign.type || "USER"}</p>
+                        </div>
+                      )}
+
+                      <Link href={getDashboardCampaignLink(campaign.id)} className="block">
+                        <Button variant="outline" className="h-10 w-full gap-2 text-xs sm:h-11 sm:text-sm">
+                          <Eye className="size-4" />
+                          View campaign detail
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </article>
             );
           })}
           <div ref={sentinelRef} />

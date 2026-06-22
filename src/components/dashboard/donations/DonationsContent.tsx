@@ -13,7 +13,6 @@ import type {
 } from "@/src/components/dashboard/donations/types";
 import {
   paymentApi,
-  type DonationHistoryPayment,
 } from "@/src/lib/api/payments";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { PaymentStatus } from "@/src/types";
@@ -68,11 +67,9 @@ export default function DonationsContent({ searchQuery }: DonationsContentProps)
       void fetchDonations();
     };
 
-    window.addEventListener("focus", handleDonationRefresh);
     window.addEventListener("torchlife:donation-verified", handleDonationRefresh as EventListener);
 
     return () => {
-      window.removeEventListener("focus", handleDonationRefresh);
       window.removeEventListener("torchlife:donation-verified", handleDonationRefresh as EventListener);
     };
   }, [fetchDonations]);

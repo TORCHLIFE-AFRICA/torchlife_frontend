@@ -37,11 +37,13 @@ import { Progress } from "@/src/components/ui/progress";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { Switch } from "@/src/components/ui/switch";
 import { Textarea } from "@/src/components/ui/textarea";
+import { CampaignImage } from "@/src/components/shared/CampaignImage";
 import CountdownLabel from "@/src/components/shared/CountdownLabel";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { campaignApi } from "@/src/lib/api/campaigns";
 import { notifyError, notifyInfo, notifySuccess } from "@/src/lib/notify";
 import { paymentApi } from "@/src/lib/api/payments";
+import { getPublicUrl } from "@/src/lib/site-url";
 import {
   CampaignStatus,
   UserRole,
@@ -281,14 +283,16 @@ function CampaignDetailSkeleton() {
 function DetailStat({
   label,
   value,
+  valueClassName,
 }: {
   label: string;
   value: string;
+  valueClassName?: string;
 }) {
   return (
-    <div className="rounded-2xl border bg-muted/20 p-4">
+    <div className="min-w-0 rounded-2xl border bg-muted/20 p-4">
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="mt-1 font-semibold">{value}</p>
+      <p className={`mt-1 break-words font-semibold ${valueClassName ?? ""}`.trim()}>{value}</p>
     </div>
   );
 }
@@ -479,8 +483,7 @@ export default function CampaignPageContent({
   }, [campaign?.isDeleted, campaign?.status, searchParams]);
 
   const shareLink = useMemo(() => {
-    if (typeof window === "undefined") return "";
-    return `${window.location.origin}/campaign/${campaign?.publicId || campaignId}`;
+    return getPublicUrl(`/campaign/${campaign?.publicId || campaignId}`);
   }, [campaign?.publicId, campaignId]);
 
   const goal = campaign?.targetAmount ?? campaign?.fundingGoal ?? 0;
@@ -512,6 +515,9 @@ export default function CampaignPageContent({
   const canAdminExtend = isAdmin && !campaign?.isDeleted;
   const canOwnerEdit = isOwner && !campaign?.isDeleted;
   const publicStatusLabel = campaign ? getPublicCampaignLabel(isExpired, goal, raised) : "Verified Campaign";
+  const publicCampaignPath = campaign?.publicId
+    ? getPublicUrl(`/campaign/${campaign.publicId}`)
+    : "Not available";
   const donationAmount =
     selectedDonationAmount === "other"
       ? parseCurrencyAmount(customDonationAmount)
@@ -595,11 +601,9 @@ export default function CampaignPageContent({
       void refreshCampaign();
     };
 
-    window.addEventListener("focus", handleDonationRefresh);
     window.addEventListener("torchlife:donation-verified", handleDonationRefresh as EventListener);
 
     return () => {
-      window.removeEventListener("focus", handleDonationRefresh);
       window.removeEventListener("torchlife:donation-verified", handleDonationRefresh as EventListener);
     };
   }, [campaign?.id, campaign?.publicId, campaignId, mode]);
@@ -901,7 +905,9 @@ export default function CampaignPageContent({
     if (!campaign) return;
 
     if (!isAuthenticated) {
-      notifyInfo("Login required", "Please login to request campaign documents.");
+      notifyInfo("Sign in required", "Sign in to request confidential document.");
+      const returnUrl = campaign.publicId ? `/campaign/${campaign.publicId}` : `/campaign/${campaign.id}`;
+      router.push(`/auth?auth=signIn&returnUrl=${encodeURIComponent(returnUrl)}`);
       return;
     }
 
@@ -977,17 +983,22 @@ export default function CampaignPageContent({
   }
 
   return (
-    <div className="space-y-8">
-      <section className="flex flex-col gap-4 rounded-3xl border bg-card p-4 shadow-sm sm:p-6">
+    <div className={`space-y-6 sm:space-y-8 ${mode === "public" ? "text-[#132726]" : ""}`}>
+      <section
+        className={`flex flex-col gap-4 rounded-3xl border p-4 shadow-sm sm:p-6 ${mode === "public"
+          ? "border-[#e6dcc8] bg-white/95 shadow-[0_24px_80px_-44px_rgba(8,28,25,0.35)]"
+          : "bg-card"
+          }`}
+      >
         <div className="space-y-2">
-          <p className="text-sm font-medium text-primary">Campaign Detail</p>
+          <p className="text-sm font-medium text-primary">Campaign</p>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{campaign.title}</h1>
           <p className="text-sm text-muted-foreground">
             {isAdmin
-              ? "Moderate, edit, extend, and soft-delete this campaign from the detail page."
+              ? "Review this campaign, update key details, and manage approvals from one place."
               : isOwner
-                ? "Monitor campaign status, copy the public link, and request an extension when needed."
-                : "View the full campaign story, donate, and share this campaign from its dedicated page."}
+                ? "Follow your progress, share your link, and manage updates as support comes in."
+                : "Read the full story, share it with others, and give securely from this page."}
           </p>
         </div>
 
@@ -1024,12 +1035,12 @@ export default function CampaignPageContent({
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
-        <div className="space-y-8">
-          <img
-            src={campaign.imageUrl || campaign.image_url || "/torchlife-logo.png"}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)] lg:gap-8">
+        <div className="min-w-0 space-y-6 sm:space-y-8">
+          <CampaignImage
+            src={campaign.imageUrl || campaign.image_url}
             alt={campaign.title}
-            className="h-[260px] w-full rounded-3xl object-cover sm:h-[360px] lg:h-[420px]"
+            wrapperClassName="h-[220px] w-full rounded-3xl sm:h-[320px] lg:h-[420px]"
           />
 
           <div className="flex flex-wrap items-center gap-3">
@@ -1054,19 +1065,19 @@ export default function CampaignPageContent({
             <Alert>
               <AlertDescription>
                 {campaign.status === "PENDING"
-                  ? "This campaign is pending approval. Public viewers cannot see it until an admin approves it."
+                  ? "This campaign is under review. It will appear publicly as soon as an admin approves it."
                   : campaign.status === "REJECTED"
-                    ? `This campaign was rejected${campaign.approvalNotes ? `: ${campaign.approvalNotes}` : "."}`
+                    ? `This campaign was not approved${campaign.approvalNotes ? `: ${campaign.approvalNotes}` : "."}`
                     : isExpired
-                      ? "Campaign Expired."
-                      : "This campaign is live and visible to public viewers."}
+                      ? "This campaign has ended."
+                      : "This campaign is live and ready to receive support."}
               </AlertDescription>
             </Alert>
           ) : null}
 
           <div className="space-y-3">
-            <h2 className="text-3xl font-bold md:text-4xl">{campaign.title}</h2>
-            <p className="text-base leading-7 text-muted-foreground">
+            <h2 className="text-2xl font-bold md:text-4xl">{campaign.title}</h2>
+            <p className="text-sm leading-7 text-muted-foreground sm:text-base">
               {campaign.story || campaign.description || "No campaign story available yet."}
             </p>
           </div>
@@ -1083,9 +1094,9 @@ export default function CampaignPageContent({
             </div>
           </div>
 
-          <div className="rounded-3xl border bg-card p-6">
+          <div className="rounded-3xl border bg-card p-4 sm:p-6">
             <h3 className="text-lg font-semibold">Hospital information</h3>
-            <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <DetailStat label="Hospital name" value={campaign.hospitalName || "Not available"} />
               <DetailStat label="Hospital location" value={campaign.location || "Not available"} />
               <DetailStat label="Hospital contact" value={campaign.hospitalContact || "Not available"} />
@@ -1096,7 +1107,7 @@ export default function CampaignPageContent({
             </div>
           </div>
 
-          <div className="grid gap-4 rounded-3xl border bg-card p-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 rounded-3xl border bg-card p-4 sm:grid-cols-2 sm:p-6 xl:grid-cols-3">
             <DetailStat label="Campaign category" value={categoryLabel} />
             <DetailStat label="Creation date" value={formatDate(campaign.createdAt)} />
             <DetailStat
@@ -1108,7 +1119,7 @@ export default function CampaignPageContent({
               label="Countdown"
               value={isExpired ? "Expired" : `${daysRemaining} days`}
             />
-            <DetailStat label="Campaign URL" value={shareLink || "Not available"} />
+            <DetailStat label="Campaign URL" value={publicCampaignPath} valueClassName="text-sm leading-6" />
           </div>
 
           <div className="rounded-3xl border bg-card p-6">
@@ -1159,7 +1170,7 @@ export default function CampaignPageContent({
           ) : null}
         </div>
 
-        <aside className="space-y-6">
+        <aside className="min-w-0 space-y-6">
           {(adminActionError || adminActionSuccess) && isAdmin ? (
             <div className="space-y-3">
               {adminActionError ? (
@@ -1196,7 +1207,7 @@ export default function CampaignPageContent({
             {isPublicViewer ? (
               <div className="mt-6 space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Support this approved campaign directly from this page.
+                  Give securely and help this family get care sooner.
                 </p>
                 <Button
                   type="button"
@@ -1210,8 +1221,8 @@ export default function CampaignPageContent({
             ) : (
               <div className="mt-6 rounded-2xl border bg-muted/30 p-4 text-sm text-muted-foreground">
                 {isOwner
-                  ? "Use this detail page to monitor approval, rejection, expiry, and extension state."
-                  : "Admins moderate campaigns only from this detail page."}
+                  ? "Return here anytime to track approval updates, donations, and deadline changes."
+                  : "Admins can review, update, and manage this campaign from here."}
               </div>
             )}
           </div>
@@ -1240,11 +1251,11 @@ export default function CampaignPageContent({
             </div>
             <div className="mt-4 space-y-3 text-sm text-muted-foreground">
               {!isAuthenticated ? (
-                <p>Log in to request access to supporting documents for this campaign.</p>
+                <p>Sign in to request confidential documents for this campaign.</p>
               ) : documentRequest ? (
                 <p>Your request status: {documentRequest.status}</p>
               ) : (
-                <p>Request access to supporting documents. Admin approval is required before download.</p>
+                <p>Campaign manager approval is required, If approved we will send it to you by email.</p>
               )}
               <Button variant="outline" className="w-full" onClick={() => void handleRequestSupportingDocuments()}>
                 Request Supporting Documents

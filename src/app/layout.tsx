@@ -5,17 +5,17 @@ import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/src/contexts/AuthContext";
 import DonationTicker from "@/src/components/shared/DonationTicker";
 import { Toaster } from "@/src/components/ui/toaster";
+import { getPublicBaseUrl } from "@/src/lib/site-url";
 import "./globals.css";
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://torchlife.vercel.app";
+const siteUrl = getPublicBaseUrl();
 
 const _inter = Inter({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "TorchLife | Verified Pregnancy Crowdfunding",
+  title: "The Trusted Way To Solve Pregnancy Crisis | TorchLife",
   description:
     "TorchLife is a for-profit health-tech platform providing verified, transparent, and fast Pregnancy crowdfunding for maternal care.",
   generator: "v0.app",
@@ -32,27 +32,27 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "TorchLife | Verified Pregnancy Crowdfunding",
+    title: "The Trusted Way To Solve Pregnancy Crisis | TorchLife",
     description:
       "TorchLife is a for-profit health-tech platform providing verified, transparent, and fast Pregnancy crowdfunding for maternal care.",
     url: siteUrl,
     siteName: "TorchLife",
     images: [
       {
-        url: "https://res.cloudinary.com/dzirjoyqd/image/upload/v1769468389/banner_co6jwm.jpg",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "TorchLife logo",
+        alt: "TorchLife hero preview",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TorchLife | Verified Pregnancy Crowdfunding",
+    title: "The Trusted Way To Solve Pregnancy Crisis | TorchLife",
     description:
       "TorchLife is a for-profit health-tech platform providing verified, transparent, and fast Pregnancy crowdfunding for maternal care.",
-    images: ["/torchlife-logo.png"],
+    images: ["/twitter-image"],
   },
 };
 

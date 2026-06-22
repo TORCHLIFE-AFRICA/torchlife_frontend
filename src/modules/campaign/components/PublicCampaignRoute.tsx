@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 
-import { Footer } from "@/src/components/landingPage/footer";
-import { Navbar } from "@/src/components/landingPage/navbar";
+import { PublicSiteFooter, PublicSiteHeader } from "@/src/components/landingPage/PublicSiteChrome";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { UserRole } from "@/src/types";
 import DashboardShell from "@/src/modules/dashboard/components/DashboardShell";
@@ -48,10 +47,10 @@ export default function PublicCampaignRoute({
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-4 lg:px-8">
+    <div className="min-h-screen bg-[#f7f2ea]">
+      <PublicSiteHeader />
+      <section className="px-4 py-8 sm:px-6 md:py-12 lg:px-8 lg:py-16">
+        <div className="mx-auto max-w-7xl">
           <CampaignPageContent
             campaignId={campaignId}
             mode="public"
@@ -59,7 +58,7 @@ export default function PublicCampaignRoute({
           />
         </div>
       </section>
-      <Footer />
+      <PublicSiteFooter />
     </div>
   );
 }

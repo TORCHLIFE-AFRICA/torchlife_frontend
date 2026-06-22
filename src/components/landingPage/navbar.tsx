@@ -34,11 +34,10 @@ export function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
           ? "bg-background/10 backdrop-blur-md shadow-sm border-b border-border"
           : "bg-transparent"
-      }`}
+        }`}
     >
       <nav className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
@@ -68,11 +67,10 @@ export function Navbar() {
               >
                 <Link
                   href={item.href}
-                  className={`text-sm font-medium transition-colors ${
-                    isScrolled
+                  className={`text-sm font-medium transition-colors ${isScrolled
                       ? "text-foreground/80 hover:text-primary"
                       : "text-gray-50 hover:text-gray-20"
-                  }`}
+                    }`}
                 >
                   {item.label}
                 </Link>
@@ -123,9 +121,8 @@ export function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden p-2 transition-colors ${
-              isScrolled ? "text-foreground" : "text-white"
-            }`}
+            className={`lg:hidden p-2 transition-colors ${isScrolled ? "text-foreground" : "text-white"
+              }`}
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -164,11 +161,10 @@ export function Navbar() {
                       <Link href="/auth?auth=signIn" className="w-1/2">
                         <Button
                           variant="outline"
-                          className={`w-full font-semibold py-3 transition-colors ${
-                            isScrolled
+                          className={`w-full font-semibold py-3 transition-colors ${isScrolled
                               ? "hover:bg-primary/20 text-black"
                               : "bg-transparent hover:bg-white/10 text-accent"
-                          }`}
+                            }`}
                         >
                           Sign In
                         </Button>
@@ -177,11 +173,10 @@ export function Navbar() {
                       <Link href="/auth" className="w-1/2">
                         <Button
                           variant="destructive"
-                          className={`w-full font-semibold py-3 transition-colors ${
-                            isScrolled
+                          className={`w-full font-semibold py-3 transition-colors ${isScrolled
                               ? "hover:bg-primary/20 text-black"
                               : "bg-accent hover:bg-accent/80 text-white"
-                          }`}
+                            }`}
                         >
                           Sign Up
                         </Button>
