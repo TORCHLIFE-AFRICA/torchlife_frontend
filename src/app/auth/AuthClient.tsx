@@ -40,6 +40,33 @@ declare global {
   }
 }
 
+// #region debug-point C:staging-auth-client-report
+async function reportStagingAuthClientDebug(
+  event: string,
+  hypothesisId: "A" | "B" | "C" | "D" | "E",
+  data: Record<string, unknown> = {}
+) {
+  try {
+    await fetch("http://127.0.0.1:7777/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "staging-auth-session",
+        runId: "pre-fix",
+        hypothesisId,
+        location: "src/app/auth/AuthClient.tsx",
+        msg: `[DEBUG] ${event}`,
+        data,
+        ts: Date.now(),
+      }),
+      keepalive: true,
+    });
+  } catch {
+    // Debug transport is best-effort only.
+  }
+}
+// #endregion
+
 function GoogleLogo() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5">
@@ -132,6 +159,7 @@ export default function AuthClient() {
   const [googleLoadFailed, setGoogleLoadFailed] = useState(false);
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const googleEnabled = googleReady && !googleLoadFailed && !!googleClientId;
+  const normalizedEmail = email.trim().toLowerCase();
 
   const getSafeReturnUrl = () => {
     if (!returnUrlParam || !returnUrlParam.startsWith("/") || returnUrlParam.startsWith("//")) {
@@ -152,6 +180,59 @@ export default function AuthClient() {
     }
 
     return `/auth/verify-email?${query.toString()}`;
+  };
+
+  const handleUnverifiedAccount = (submitError: unknown) => {
+    if (
+      !(submitError instanceof ApiClientError) ||
+      submitError.status !== 403 ||
+      submitError.data.code !== "EMAIL_NOT_VERIFIED"
+    ) {
+      return false;
+    }
+
+    const unverifiedUserId =
+      typeof submitError.data.data === "object" &&
+        submitError.data.data &&
+        typeof (submitError.data.data as { userId?: unknown }).userId === "string"
+        ? ((submitError.data.data as { userId: string }).userId)
+        : null;
+    const unverifiedEmail =
+      typeof submitError.data.data === "object" &&
+        submitError.data.data &&
+        typeof (submitError.data.data as { email?: unknown }).email === "string"
+        ? ((submitError.data.data as { email: string }).email)
+        : normalizedEmail;
+
+    if (!unverifiedUserId) {
+      return false;
+    }
+
+    notifyInfo("Account not verified", "We redirected you to complete email verification.");
+    router.replace(getVerificationRoute(unverifiedUserId, unverifiedEmail));
+    return true;
+  };
+
+  const tryRecoverFailedSignup = async () => {
+    if (!normalizedEmail || !password) {
+      return false;
+    }
+
+    try {
+      const recoveredUser = await login(normalizedEmail, password);
+      notifyInfo("Account recovered", "Your account was created. Continue with email verification.");
+      router.replace(
+        recoveredUser.isVerified
+          ? getSafeReturnUrl()
+          : getVerificationRoute(recoveredUser.id, recoveredUser.email)
+      );
+      return true;
+    } catch (recoveryError) {
+      if (handleUnverifiedAccount(recoveryError)) {
+        return true;
+      }
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -238,13 +319,44 @@ export default function AuthClient() {
   }, [googleClientId, googleEnabled, googleLoadFailed, googleReady, isSignUp, loginWithGoogle, router]);
 
   useEffect(() => {
+    void reportStagingAuthClientDebug("auth_client_render_state", "E", {
+      isSignUp,
+      isAuthenticated,
+      isLoading,
+      hasUser: !!user,
+      userId: user?.id ?? null,
+      userEmail: user?.email ?? null,
+      returnUrlParam,
+      searchAuthParam: signIn,
+    });
     if (signIn === "signIn") {
       setIsSignUp(false);
     }
   }, [signIn]);
 
   useEffect(() => {
+    void reportStagingAuthClientDebug("auth_client_redirect_guard_checked", "E", {
+      isAuthenticated,
+      isLoading,
+      hasUser: !!user,
+      userId: user?.id ?? null,
+      userEmail: user?.email ?? null,
+      destination:
+        user && !isLoading
+          ? user.isVerified
+            ? getSafeReturnUrl()
+            : getVerificationRoute(user.id, user.email)
+          : null,
+    });
     if (!isLoading && isAuthenticated && user) {
+      void reportStagingAuthClientDebug("auth_client_redirect_triggered", "E", {
+        userId: user.id,
+        userEmail: user.email,
+        isVerified: user.isVerified,
+        destination: user.isVerified
+          ? getSafeReturnUrl()
+          : getVerificationRoute(user.id, user.email),
+      });
       router.replace(
         user.isVerified
           ? getSafeReturnUrl()
@@ -257,6 +369,14 @@ export default function AuthClient() {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
+    void reportStagingAuthClientDebug("auth_client_submit_started", isSignUp ? "D" : "C", {
+      mode: isSignUp ? "signup" : "signin",
+      email: normalizedEmail,
+      passwordLength: password.length,
+      hasFirstName: !!firstName,
+      hasLastName: !!lastName,
+      hasPhoneNumber: !!phoneNumber,
+    });
     try {
       if (isSignUp) {
         if (password !== confirmPassword) {
@@ -270,7 +390,15 @@ export default function AuthClient() {
           philanthropicName,
           phoneNumber,
         });
+        void reportStagingAuthClientDebug("auth_client_signup_register_returned", "D", {
+          userId: user.id,
+          email: user.email,
+          isVerified: user.isVerified,
+        });
         notifySuccess("Account created", "Check your email to complete verification.");
+        void reportStagingAuthClientDebug("auth_client_signup_redirect_triggered", "D", {
+          destination: getVerificationRoute(user.id, user.email),
+        });
         router.replace(getVerificationRoute(user.id, user.email));
       } else {
         void reportLoginDebug("auth_signin_submit", {
@@ -281,6 +409,11 @@ export default function AuthClient() {
           passwordLength: password.length,
         });
         const user = await login(email, password);
+        void reportStagingAuthClientDebug("auth_client_signin_login_returned", "C", {
+          userId: user.id,
+          email: user.email,
+          isVerified: user.isVerified,
+        });
         void reportLoginDebug("auth_signin_submit_success", {
           hypothesisId: "E",
           userId: user.id,
@@ -288,6 +421,11 @@ export default function AuthClient() {
           isVerified: user.isVerified,
         });
         notifySuccess("Login successful", "Welcome back to TorchLife.");
+        void reportStagingAuthClientDebug("auth_client_signin_redirect_triggered", "E", {
+          destination: user.isVerified
+            ? getSafeReturnUrl()
+            : getVerificationRoute(user.id, user.email),
+        });
         router.replace(
           user.isVerified
             ? getSafeReturnUrl()
@@ -295,6 +433,24 @@ export default function AuthClient() {
         );
       }
     } catch (submitError) {
+      void reportStagingAuthClientDebug("auth_client_submit_failed", isSignUp ? "D" : "A", {
+        mode: isSignUp ? "signup" : "signin",
+        errorName: submitError instanceof Error ? submitError.name : "UnknownError",
+        message: submitError instanceof Error ? submitError.message : "Authentication failed",
+        status: submitError instanceof ApiClientError ? submitError.status : null,
+      });
+      if (
+        isSignUp &&
+        submitError instanceof ApiClientError &&
+        submitError.status === 500 &&
+        submitError.message === "User creation failed."
+      ) {
+        const recovered = await tryRecoverFailedSignup();
+        if (recovered) {
+          return;
+        }
+      }
+
       void reportLoginDebug("auth_signin_submit_failure", {
         hypothesisId:
           submitError instanceof ApiClientError && submitError.status === 403
@@ -309,37 +465,21 @@ export default function AuthClient() {
             ? submitError.data.code
             : null,
       });
-      if (
-        submitError instanceof ApiClientError &&
-        submitError.status === 403 &&
-        submitError.data.code === "EMAIL_NOT_VERIFIED"
-      ) {
-        const unverifiedUserId =
-          typeof submitError.data.data === "object" &&
-            submitError.data.data &&
-            typeof (submitError.data.data as { userId?: unknown }).userId === "string"
-            ? ((submitError.data.data as { userId: string }).userId)
-            : null;
-        const unverifiedEmail =
-          typeof submitError.data.data === "object" &&
-            submitError.data.data &&
-            typeof (submitError.data.data as { email?: unknown }).email === "string"
-            ? ((submitError.data.data as { email: string }).email)
-            : email.trim().toLowerCase();
-
-        if (unverifiedUserId) {
-          notifyInfo("Account not verified", "We redirected you to complete email verification.");
-          router.replace(getVerificationRoute(unverifiedUserId, unverifiedEmail));
-          return;
-        }
+      if (handleUnverifiedAccount(submitError)) {
+        return;
       }
 
       const message =
-        submitError instanceof Error
-          ? submitError.message
-          : "Authentication failed. Please try again.";
+        isSignUp &&
+          submitError instanceof ApiClientError &&
+          submitError.status === 500 &&
+          submitError.message === "User creation failed."
+          ? "We could not finish setting up your account right now. If this email was just registered, try signing in to continue verification."
+          : submitError instanceof Error
+            ? submitError.message
+            : "Authentication failed. Please try again.";
       setError(message);
-      notifyError("Login failed", message);
+      notifyError(isSignUp ? "Sign up failed" : "Login failed", message);
     } finally {
       setIsSubmitting(false);
     }

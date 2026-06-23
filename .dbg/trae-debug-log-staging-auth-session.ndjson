@@ -1,0 +1,4 @@
+{"sessionId": "staging-auth-session", "runId": "pre-fix", "hypothesisId": "B", "location": "src/contexts/AuthContext.tsx", "msg": "[DEBUG] auth_bootstrap_started", "data": {"hasDocument": true, "visibilityState": "hidden"}, "ts": 1782203866032}
+{"sessionId": "staging-auth-session", "runId": "pre-fix", "hypothesisId": "B", "location": "src/contexts/AuthContext.tsx", "msg": "[DEBUG] auth_bootstrap_me_failed", "data": {}, "ts": 1782203866258}
+{"sessionId": "staging-auth-session", "runId": "pre-fix", "hypothesisId": "A", "location": "src/contexts/AuthContext.tsx", "msg": "[DEBUG] auth_bootstrap_refresh_failed", "data": {}, "ts": 1782203866514}
+{"sessionId": "staging-auth-session", "runId": "pre-fix", "hypothesisId": "B", "location": "src/contexts/AuthContext.tsx", "msg": "[DEBUG] auth_bootstrap_finished", "data": {"userResolved": false}, "ts": 1782203866515}
