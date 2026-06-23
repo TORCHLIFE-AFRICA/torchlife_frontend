@@ -11,10 +11,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
-import { Spinner } from "@/src/components/ui/spinner";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { CampaignImage } from "@/src/components/shared/CampaignImage";
 import CountdownLabel from "@/src/components/shared/CountdownLabel";
+import { DashboardCampaignCardSkeleton } from "@/src/components/dashboard/dashboard-skeletons";
 import { campaignApi } from "@/src/lib/api/campaigns";
 import type { Campaign } from "@/src/types";
 import {
@@ -110,9 +110,10 @@ export default function CampaignsContent({ searchQuery }: CampaignsContentProps)
       </Card>
 
       {isLoading ? (
-        <div className="flex items-center justify-center rounded-3xl border bg-card px-6 py-16 text-sm text-muted-foreground">
-          <Spinner className="mr-2" />
-          Loading campaigns...
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <DashboardCampaignCardSkeleton key={index} compact />
+          ))}
         </div>
       ) : error ? (
         <Alert variant="destructive">
@@ -151,8 +152,12 @@ export default function CampaignsContent({ searchQuery }: CampaignsContentProps)
                           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${theme.badge}`}>
                             {getCampaignDisplayStatus(campaign)}
                           </span>
-                          <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-[#0f766e] shadow-sm">
-                            <CountdownLabel deadline={campaign.deadline ?? campaign.endDate} />
+                          <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#0f766e] shadow-sm sm:text-[11px]">
+                            <CountdownLabel
+                              deadline={campaign.deadline ?? campaign.endDate}
+                              liveLabel
+                              className="tabular-nums"
+                            />
                           </span>
                         </div>
                       </div>

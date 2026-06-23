@@ -10,32 +10,6 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { authApi } from "@/src/lib/api/auth";
 
-// #region debug-point reset-password-frontend-report
-async function reportResetPasswordDebug(
-  event: string,
-  payload: Record<string, unknown> = {}
-) {
-  try {
-    await fetch("http://127.0.0.1:7777/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "reset-password-endpoint",
-        source: "frontend",
-        event,
-        hypothesisId: payload.hypothesisId ?? null,
-        runId: "pre",
-        ts: new Date().toISOString(),
-        payload,
-      }),
-      keepalive: true,
-    });
-  } catch {
-    // Intentionally ignore debug transport failures.
-  }
-}
-// #endregion debug-point reset-password-frontend-report
-
 export default function ForgotPasswordPage() {
   const [identifier, setIdentifier] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -60,35 +34,17 @@ export default function ForgotPasswordPage() {
 
     setIsSubmitting(true);
     try {
-      void reportResetPasswordDebug("reset_password_submit", {
-        hypothesisId: "B",
-        identifier: identifier.trim(),
-        oldPasswordLength: oldPassword.length,
-        newPasswordLength: newPassword.length,
-      });
       await authApi.resetPassword(
         identifier.trim(),
         oldPassword,
         newPassword
       );
-      void reportResetPasswordDebug("reset_password_submit_success", {
-        hypothesisId: "D",
-        identifier: identifier.trim(),
-      });
       setSuccess("Password reset successful. You can now sign in with your new password.");
       setIdentifier("");
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (submitError) {
-      void reportResetPasswordDebug("reset_password_submit_failure", {
-        hypothesisId: "E",
-        identifier: identifier.trim(),
-        message:
-          submitError instanceof Error
-            ? submitError.message
-            : "Unable to reset password right now.",
-      });
       setError(
         submitError instanceof Error
           ? submitError.message

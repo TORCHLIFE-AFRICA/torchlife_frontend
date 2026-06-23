@@ -1,6 +1,8 @@
 import { ApiResponse } from "@/src/types";
 import { notifyError } from "@/src/lib/notify";
 
+const ACCESS_TOKEN_STORAGE_KEY = "torchlife:access-token";
+
 export class ApiClientError extends Error {
   status: number;
   data: Record<string, unknown>;
@@ -16,6 +18,28 @@ export class ApiClientError extends Error {
     this.data = data;
   }
 }
+
+export const getStoredAccessToken = (): string | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const token = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+  return token && token.trim().length > 0 ? token : null;
+};
+
+export const setStoredAccessToken = (token: string | null) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  if (token && token.trim().length > 0) {
+    window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+    return;
+  }
+
+  window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+};
 
 class ApiClient {
   private baseURL: string;
@@ -44,6 +68,8 @@ class ApiClient {
     if (typeof window === "undefined" || !this.shouldHandleUnauthorized(endpoint)) {
       return;
     }
+
+    setStoredAccessToken(null);
 
     const now = Date.now();
     const lastShownAt = Number(window.sessionStorage.getItem("torchlife:session-expired-at") || "0");
@@ -123,14 +149,21 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
+    const accessToken = getStoredAccessToken();
+    const headers = new Headers(options.headers ?? {});
+
+    if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
+      headers.set("Content-Type", "application/json");
+    }
+
+    if (accessToken && !headers.has("Authorization")) {
+      headers.set("Authorization", `Bearer ${accessToken}`);
+    }
 
     const config: RequestInit = {
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
       credentials: "include",
       ...options,
+      headers,
     };
 
     try {
@@ -203,6 +236,11 @@ class ApiClient {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
         xhr.withCredentials = true;
+        const accessToken = getStoredAccessToken();
+
+        if (accessToken) {
+          xhr.setRequestHeader("Authorization", `Bearer ${accessToken}`);
+        }
 
         xhr.upload.onprogress = (event) => {
           if (!event.lengthComputable) {
@@ -246,10 +284,13 @@ class ApiClient {
       });
     }
 
+    const accessToken = getStoredAccessToken();
+
     const config: RequestInit = {
       method: "POST",
       credentials: "include",
       body: formData,
+      headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
     };
 
     try {

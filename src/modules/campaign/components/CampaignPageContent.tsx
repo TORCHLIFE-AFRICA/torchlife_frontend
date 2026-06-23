@@ -1050,8 +1050,8 @@ export default function CampaignPageContent({
             <Badge variant="outline" className="border-muted-foreground/20 bg-muted/20">
               {categoryLabel}
             </Badge>
-            <Badge variant="outline" className="border-muted-foreground/20 bg-muted/20">
-              <CountdownLabel deadline={deadline} expiredLabel="Expired" />
+            <Badge variant="outline" className="border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-emerald-700">
+              <CountdownLabel deadline={deadline} expiredLabel="Expired" liveLabel className="tabular-nums" />
             </Badge>
             {isPublicViewer && campaign.status === "APPROVED" && !isExpired && raised < goal ? (
               <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700">
@@ -1194,6 +1194,18 @@ export default function CampaignPageContent({
               <p className="text-sm text-muted-foreground">
                 Remaining {formatMoney(remainingAmount, campaign.currency)}
               </p>
+            </div>
+
+            <div className="mt-5 rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.24em] text-emerald-700">
+                Live countdown
+              </p>
+              <CountdownLabel
+                deadline={deadline}
+                expiredLabel="Expired"
+                liveLabel
+                className="mt-2 block text-xl font-black tracking-tight text-emerald-900 tabular-nums sm:text-2xl"
+              />
             </div>
 
             <div className="mt-5 space-y-2">

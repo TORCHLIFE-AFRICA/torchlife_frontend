@@ -15,9 +15,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
-import { Spinner } from "@/src/components/ui/spinner";
 import { EmptyState } from "@/src/components/ui/empty-state";
 import CountdownLabel from "@/src/components/shared/CountdownLabel";
+import {
+  DashboardCampaignCardSkeleton,
+  DashboardMetricSkeleton,
+} from "@/src/components/dashboard/dashboard-skeletons";
+import { Skeleton } from "@/src/components/ui/skeleton";
 import { authApi } from "@/src/lib/api/auth";
 import { campaignApi } from "@/src/lib/api/campaigns";
 import { ApiClientError } from "@/src/lib/api/client";
@@ -179,9 +183,25 @@ export default function DashboardOverviewContent({
       </section>
 
       {isLoading ? (
-        <div className="flex items-center justify-center rounded-3xl border bg-card px-6 py-16 text-sm text-muted-foreground">
-          <Spinner className="mr-2" />
-          Loading your fundraising overview...
+        <div className="space-y-8">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <DashboardMetricSkeleton key={index} />
+            ))}
+          </div>
+          <div className="grid gap-5 xl:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <DashboardCampaignCardSkeleton key={index} />
+            ))}
+          </div>
+          <div className="space-y-4 rounded-3xl border bg-card p-6">
+            <Skeleton className="h-6 w-52" />
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <DashboardCampaignCardSkeleton key={index} compact />
+              ))}
+            </div>
+          </div>
         </div>
       ) : error ? (
         <Alert variant="destructive">
@@ -238,8 +258,8 @@ export default function DashboardOverviewContent({
                                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${theme.badge}`}>
                                       {displayStatus}
                                     </span>
-                                    <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-[#0f766e] shadow-sm">
-                                      <CountdownLabel deadline={deadline} />
+                                    <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#0f766e] shadow-sm sm:text-[11px]">
+                                      <CountdownLabel deadline={deadline} liveLabel className="tabular-nums" />
                                     </span>
                                   </div>
                                 </div>
@@ -391,8 +411,12 @@ export default function DashboardOverviewContent({
                                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${theme.badge}`}>
                                       {getCampaignDisplayStatus(campaign)}
                                     </span>
-                                    <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-[#0f766e] shadow-sm">
-                                      <CountdownLabel deadline={campaign.deadline ?? campaign.endDate} />
+                                    <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#0f766e] shadow-sm sm:text-[11px]">
+                                      <CountdownLabel
+                                        deadline={campaign.deadline ?? campaign.endDate}
+                                        liveLabel
+                                        className="tabular-nums"
+                                      />
                                     </span>
                                   </div>
                                 </div>

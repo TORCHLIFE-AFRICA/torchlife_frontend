@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiClient, setStoredAccessToken } from "./client";
 import { User, AuthFormData } from "@/src/types";
 
 export type AuthTokenResponse = {
@@ -20,6 +20,10 @@ type BackendUser = {
   isverified: boolean;
   created_at?: string | Date;
   updated_at?: string | Date;
+};
+
+type SignUpResponse = AuthTokenResponse & {
+  user: BackendUser;
 };
 
 const mapUser = (user: BackendUser): User => ({
@@ -46,11 +50,12 @@ export const authApi = {
       identifier,
       password,
     });
+    setStoredAccessToken(response.data.accessToken);
     return response.data;
   },
 
   async signUp(data: AuthFormData): Promise<User> {
-    const response = await apiClient.post<BackendUser>("/auth/signup", {
+    const response = await apiClient.post<SignUpResponse>("/auth/signup", {
       email: data.email,
       password: data.password,
       first_name: data.firstName,
@@ -58,22 +63,29 @@ export const authApi = {
       philanthropic_name: data.philanthropicName,
       phone_number: data.phoneNumber,
     });
-    return mapUser(response.data);
+    setStoredAccessToken(response.data.accessToken);
+    return mapUser(response.data.user);
   },
 
   async signInWithGoogle(credential: string): Promise<AuthTokenResponse> {
     const response = await apiClient.post<AuthTokenResponse>("/auth/google", {
       credential,
     });
+    setStoredAccessToken(response.data.accessToken);
     return response.data;
   },
 
   async logout(): Promise<void> {
-    await apiClient.post("/auth/logout");
+    try {
+      await apiClient.post("/auth/logout");
+    } finally {
+      setStoredAccessToken(null);
+    }
   },
 
   async refresh(): Promise<AuthTokenResponse> {
     const response = await apiClient.post<AuthTokenResponse>("/auth/refresh");
+    setStoredAccessToken(response.data.accessToken);
     return response.data;
   },
 

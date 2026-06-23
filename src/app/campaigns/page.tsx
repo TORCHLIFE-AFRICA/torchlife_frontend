@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PublicSiteFooter, PublicSiteHeader } from "@/src/components/landingPage/PublicSiteChrome";
+import { DashboardCampaignCardSkeleton } from "@/src/components/dashboard/dashboard-skeletons";
 import { CampaignImage } from "@/src/components/shared/CampaignImage";
+import CountdownLabel from "@/src/components/shared/CountdownLabel";
 import { Button } from "@/src/components/ui/button";
 import { Spinner } from "@/src/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert";
@@ -123,9 +125,10 @@ export default function CampaignsPage() {
       <section className="px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
           {isLoading ? (
-            <div className="flex justify-center rounded-[2rem] border border-black/5 bg-white py-20 text-[#556a66]">
-              <Spinner className="mr-2" />
-              Loading campaigns...
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <DashboardCampaignCardSkeleton key={index} compact />
+              ))}
             </div>
           ) : error ? (
             <Alert variant="destructive" className="mx-auto max-w-3xl">
@@ -172,8 +175,12 @@ export default function CampaignsPage() {
                               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${theme.badge}`}>
                                 {getCampaignDisplayStatus(campaign)}
                               </span>
-                              <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-[#0f766e] shadow-sm">
-                                LIVE
+                              <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#0f766e] shadow-sm sm:text-[11px]">
+                                <CountdownLabel
+                                  deadline={campaign.deadline ?? campaign.endDate}
+                                  liveLabel
+                                  className="tabular-nums"
+                                />
                               </span>
                             </div>
                           </div>

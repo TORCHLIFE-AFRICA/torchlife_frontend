@@ -10,6 +10,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src
 import { EmptyState } from "@/src/components/ui/empty-state";
 import { CampaignImage } from "@/src/components/shared/CampaignImage";
 import { Spinner } from "@/src/components/ui/spinner";
+import CountdownLabel from "@/src/components/shared/CountdownLabel";
+import {
+  DashboardCampaignCardSkeleton,
+  DashboardMetricSkeleton,
+} from "@/src/components/dashboard/dashboard-skeletons";
 import { useInfiniteScroll } from "@/src/hooks/use-infinite-scroll";
 import { campaignApi } from "@/src/lib/api/campaigns";
 import { userApi } from "@/src/lib/api/users";
@@ -180,9 +185,17 @@ export default function AdminContent({ searchQuery }: AdminContentProps) {
       ) : null}
 
       {isLoading ? (
-        <div className="flex items-center justify-center rounded-3xl border bg-card px-6 py-16 text-sm text-muted-foreground">
-          <Spinner className="mr-2" />
-          Loading admin campaigns...
+        <div className="space-y-6">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <DashboardMetricSkeleton key={index} />
+            ))}
+          </div>
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <DashboardCampaignCardSkeleton key={index} compact />
+            ))}
+          </div>
         </div>
       ) : campaigns.length === 0 ? (
         <EmptyState
@@ -215,8 +228,12 @@ export default function AdminContent({ searchQuery }: AdminContentProps) {
                           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${theme.badge}`}>
                             {campaign.status}
                           </span>
-                          <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-[#0f766e] shadow-sm">
-                            {campaign.createdAt.toLocaleDateString()}
+                          <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#0f766e] shadow-sm sm:text-[11px]">
+                            <CountdownLabel
+                              deadline={campaign.deadline ?? campaign.endDate}
+                              liveLabel
+                              className="tabular-nums"
+                            />
                           </span>
                         </div>
                       </div>

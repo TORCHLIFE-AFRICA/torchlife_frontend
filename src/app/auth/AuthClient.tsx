@@ -40,33 +40,6 @@ declare global {
   }
 }
 
-// #region debug-point C:staging-auth-client-report
-async function reportStagingAuthClientDebug(
-  event: string,
-  hypothesisId: "A" | "B" | "C" | "D" | "E",
-  data: Record<string, unknown> = {}
-) {
-  try {
-    await fetch("http://127.0.0.1:7777/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "staging-auth-session",
-        runId: "pre-fix",
-        hypothesisId,
-        location: "src/app/auth/AuthClient.tsx",
-        msg: `[DEBUG] ${event}`,
-        data,
-        ts: Date.now(),
-      }),
-      keepalive: true,
-    });
-  } catch {
-    // Debug transport is best-effort only.
-  }
-}
-// #endregion
-
 function GoogleLogo() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5">
@@ -89,52 +62,6 @@ function GoogleLogo() {
     </svg>
   );
 }
-
-// #region debug-point google-sso-frontend-report
-async function reportGoogleSsoDebug(event: string, payload: Record<string, unknown> = {}) {
-  try {
-    await fetch("http://127.0.0.1:7777/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "google-sso",
-        source: "frontend",
-        event,
-        hypothesisId: payload.hypothesisId ?? null,
-        runId: "pre",
-        ts: new Date().toISOString(),
-        payload,
-      }),
-      keepalive: true,
-    });
-  } catch {
-    // Intentionally ignore debug transport failures.
-  }
-}
-// #endregion debug-point google-sso-frontend-report
-
-// #region debug-point login-invalid-credentials-frontend-report
-async function reportLoginDebug(event: string, payload: Record<string, unknown> = {}) {
-  try {
-    await fetch("http://127.0.0.1:7777/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "login-invalid-credentials",
-        source: "frontend",
-        event,
-        hypothesisId: payload.hypothesisId ?? null,
-        runId: "pre",
-        ts: new Date().toISOString(),
-        payload,
-      }),
-      keepalive: true,
-    });
-  } catch {
-    // Intentionally ignore debug transport failures.
-  }
-}
-// #endregion debug-point login-invalid-credentials-frontend-report
 
 export default function AuthClient() {
   const [isSignUp, setIsSignUp] = useState(true);
@@ -236,31 +163,12 @@ export default function AuthClient() {
   };
 
   useEffect(() => {
-    void reportGoogleSsoDebug("google_sso_auth_client_state", {
-      hypothesisId: "A",
-      googleReady,
-      googleLoadFailed,
-      hasGoogleObject: typeof window !== "undefined" ? !!window.google : false,
-      hasGoogleClientId: !!googleClientId,
-      googleClientIdSuffix: googleClientId ? googleClientId.slice(-24) : null,
-      apiBaseUrl: process.env.NEXT_PUBLIC_API_URL ?? null,
-      googleEnabled,
-      mode: isSignUp ? "signup" : "signin",
-    });
-
     if (!googleReady || typeof window === "undefined" || !window.google) return;
     if (!googleClientId) return;
 
     window.google.accounts.id.initialize({
       client_id: googleClientId,
       callback: async (response: { credential?: string }) => {
-        void reportGoogleSsoDebug("google_sso_callback_received", {
-          hypothesisId: "D",
-          hasCredential: !!response.credential,
-          credentialLength: response.credential?.length ?? 0,
-          mode: isSignUp ? "signup" : "signin",
-        });
-
         if (!response.credential) {
           setError("Google authentication failed. Please try again.");
           return;
@@ -268,28 +176,13 @@ export default function AuthClient() {
         setError(null);
         setIsSubmitting(true);
         try {
-          void reportGoogleSsoDebug("google_sso_login_request_start", {
-            hypothesisId: "B",
-            apiBaseUrl: process.env.NEXT_PUBLIC_API_URL ?? null,
-            mode: isSignUp ? "signup" : "signin",
-          });
           const user = await loginWithGoogle(response.credential);
-          void reportGoogleSsoDebug("google_sso_login_request_success", {
-            hypothesisId: "E",
-            mode: isSignUp ? "signup" : "signin",
-            isVerified: user.isVerified,
-          });
           router.replace(
             user.isVerified
               ? getSafeReturnUrl()
               : getVerificationRoute(user.id, user.email)
           );
         } catch (submitError) {
-          void reportGoogleSsoDebug("google_sso_login_request_failure", {
-            hypothesisId: "B",
-            message: submitError instanceof Error ? submitError.message : "Unknown Google sign in error",
-            mode: isSignUp ? "signup" : "signin",
-          });
           setError(
             submitError instanceof Error
               ? submitError.message
@@ -311,52 +204,17 @@ export default function AuthClient() {
         shape: "pill",
         width: 360,
       });
-      void reportGoogleSsoDebug("google_sso_button_rendered", {
-        hypothesisId: "D",
-        mode: isSignUp ? "signup" : "signin",
-      });
     }
   }, [googleClientId, googleEnabled, googleLoadFailed, googleReady, isSignUp, loginWithGoogle, router]);
 
   useEffect(() => {
-    void reportStagingAuthClientDebug("auth_client_render_state", "E", {
-      isSignUp,
-      isAuthenticated,
-      isLoading,
-      hasUser: !!user,
-      userId: user?.id ?? null,
-      userEmail: user?.email ?? null,
-      returnUrlParam,
-      searchAuthParam: signIn,
-    });
     if (signIn === "signIn") {
       setIsSignUp(false);
     }
   }, [signIn]);
 
   useEffect(() => {
-    void reportStagingAuthClientDebug("auth_client_redirect_guard_checked", "E", {
-      isAuthenticated,
-      isLoading,
-      hasUser: !!user,
-      userId: user?.id ?? null,
-      userEmail: user?.email ?? null,
-      destination:
-        user && !isLoading
-          ? user.isVerified
-            ? getSafeReturnUrl()
-            : getVerificationRoute(user.id, user.email)
-          : null,
-    });
     if (!isLoading && isAuthenticated && user) {
-      void reportStagingAuthClientDebug("auth_client_redirect_triggered", "E", {
-        userId: user.id,
-        userEmail: user.email,
-        isVerified: user.isVerified,
-        destination: user.isVerified
-          ? getSafeReturnUrl()
-          : getVerificationRoute(user.id, user.email),
-      });
       router.replace(
         user.isVerified
           ? getSafeReturnUrl()
@@ -369,14 +227,6 @@ export default function AuthClient() {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
-    void reportStagingAuthClientDebug("auth_client_submit_started", isSignUp ? "D" : "C", {
-      mode: isSignUp ? "signup" : "signin",
-      email: normalizedEmail,
-      passwordLength: password.length,
-      hasFirstName: !!firstName,
-      hasLastName: !!lastName,
-      hasPhoneNumber: !!phoneNumber,
-    });
     try {
       if (isSignUp) {
         if (password !== confirmPassword) {
@@ -390,42 +240,11 @@ export default function AuthClient() {
           philanthropicName,
           phoneNumber,
         });
-        void reportStagingAuthClientDebug("auth_client_signup_register_returned", "D", {
-          userId: user.id,
-          email: user.email,
-          isVerified: user.isVerified,
-        });
         notifySuccess("Account created", "Check your email to complete verification.");
-        void reportStagingAuthClientDebug("auth_client_signup_redirect_triggered", "D", {
-          destination: getVerificationRoute(user.id, user.email),
-        });
         router.replace(getVerificationRoute(user.id, user.email));
       } else {
-        void reportLoginDebug("auth_signin_submit", {
-          hypothesisId: "C",
-          isSignUp,
-          rawEmailValue: email,
-          normalizedIdentifier: email.trim().toLowerCase(),
-          passwordLength: password.length,
-        });
         const user = await login(email, password);
-        void reportStagingAuthClientDebug("auth_client_signin_login_returned", "C", {
-          userId: user.id,
-          email: user.email,
-          isVerified: user.isVerified,
-        });
-        void reportLoginDebug("auth_signin_submit_success", {
-          hypothesisId: "E",
-          userId: user.id,
-          email: user.email,
-          isVerified: user.isVerified,
-        });
         notifySuccess("Login successful", "Welcome back to TorchLife.");
-        void reportStagingAuthClientDebug("auth_client_signin_redirect_triggered", "E", {
-          destination: user.isVerified
-            ? getSafeReturnUrl()
-            : getVerificationRoute(user.id, user.email),
-        });
         router.replace(
           user.isVerified
             ? getSafeReturnUrl()
@@ -433,12 +252,6 @@ export default function AuthClient() {
         );
       }
     } catch (submitError) {
-      void reportStagingAuthClientDebug("auth_client_submit_failed", isSignUp ? "D" : "A", {
-        mode: isSignUp ? "signup" : "signin",
-        errorName: submitError instanceof Error ? submitError.name : "UnknownError",
-        message: submitError instanceof Error ? submitError.message : "Authentication failed",
-        status: submitError instanceof ApiClientError ? submitError.status : null,
-      });
       if (
         isSignUp &&
         submitError instanceof ApiClientError &&
@@ -450,21 +263,6 @@ export default function AuthClient() {
           return;
         }
       }
-
-      void reportLoginDebug("auth_signin_submit_failure", {
-        hypothesisId:
-          submitError instanceof ApiClientError && submitError.status === 403
-            ? "B"
-            : "A",
-        errorName: submitError instanceof Error ? submitError.name : "UnknownError",
-        message: submitError instanceof Error ? submitError.message : "Authentication failed",
-        status: submitError instanceof ApiClientError ? submitError.status : null,
-        code:
-          submitError instanceof ApiClientError &&
-            typeof submitError.data.code === "string"
-            ? submitError.data.code
-            : null,
-      });
       if (handleUnverifiedAccount(submitError)) {
         return;
       }
@@ -490,18 +288,8 @@ export default function AuthClient() {
       <Script
         src="https://accounts.google.com/gsi/client"
         strategy="afterInteractive"
-        onLoad={() => {
-          void reportGoogleSsoDebug("google_sso_script_loaded", {
-            hypothesisId: "D",
-          });
-          setGoogleReady(true);
-        }}
-        onError={() => {
-          void reportGoogleSsoDebug("google_sso_script_failed", {
-            hypothesisId: "D",
-          });
-          setGoogleLoadFailed(true);
-        }}
+        onLoad={() => setGoogleReady(true)}
+        onError={() => setGoogleLoadFailed(true)}
       />
       <Navbar />
 
