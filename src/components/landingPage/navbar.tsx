@@ -40,7 +40,7 @@ export function Navbar() {
         }`}
     >
       <nav className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="flex items-center justify-between h-14 lg:h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <CloudinaryImage
@@ -52,7 +52,7 @@ export function Navbar() {
                 width: 150,
                 height: 100,
               }}
-              className="object-cover"
+              className="h-10 w-auto object-contain lg:h-11"
               priority={true}
             />
           </Link>
@@ -139,18 +139,18 @@ export function Navbar() {
               transition={{ duration: 0.3 }}
               className="lg:hidden bg-background border-t border-border"
             >
-              <div className="py-4 space-y-4">
+              <div className="py-3 space-y-3">
                 {navItems.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="block px-4 py-2 text-foreground/80 hover:text-primary hover:bg-muted transition-colors"
+                    className="block px-4 py-1.5 text-foreground/80 hover:text-primary hover:bg-muted transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.label}
                   </Link>
                 ))}
-                <div className="px-4 py-6 space-y-6">
+                <div className="px-4 py-4 space-y-4">
                   {/* Auth buttons */}
                   <div className="flex gap-3">
                     <motion.div
@@ -161,7 +161,7 @@ export function Navbar() {
                       <Link href="/auth?auth=signIn" className="w-1/2">
                         <Button
                           variant="outline"
-                          className={`w-full font-semibold py-3 transition-colors ${isScrolled
+                          className={`h-10 w-full font-semibold transition-colors ${isScrolled
                               ? "hover:bg-primary/20 text-black"
                               : "bg-transparent hover:bg-white/10 text-accent"
                             }`}
@@ -173,7 +173,7 @@ export function Navbar() {
                       <Link href="/auth" className="w-1/2">
                         <Button
                           variant="destructive"
-                          className={`w-full font-semibold py-3 transition-colors ${isScrolled
+                          className={`h-10 w-full font-semibold transition-colors ${isScrolled
                               ? "hover:bg-primary/20 text-black"
                               : "bg-accent hover:bg-accent/80 text-white"
                             }`}
@@ -186,7 +186,7 @@ export function Navbar() {
 
                   {/* Primary CTA */}
                   <Button
-                    className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                    className="h-10 w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
                     onClick={() => {
                       setShowCampaignModal(true);
                       setIsMobileMenuOpen(false);

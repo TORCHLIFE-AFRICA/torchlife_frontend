@@ -24,9 +24,48 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const lastSessionValidationAtRef = useRef(0);
 
   const refreshCurrentUser = async (): Promise<User> => {
+    // #region debug-point C:auth-bootstrap-refresh-order
+    fetch("http://127.0.0.1:7777/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: "staging-refresh-cookie",
+        runId: "pre-fix",
+        hypothesisId: "C",
+        location: "src/contexts/AuthContext.tsx:26",
+        msg: "[DEBUG] bootstrap current user started",
+        data: {
+          hasUserState: Boolean(user),
+          isLoadingState: isLoading,
+          visibilityState: typeof document !== "undefined" ? document.visibilityState : null,
+        },
+        ts: Date.now(),
+      }),
+      keepalive: true,
+    }).catch(() => undefined);
+    // #endregion
     try {
       return await authApi.getCurrentUser();
     } catch {
+      // #region debug-point C:auth-bootstrap-fallback-refresh
+      fetch("http://127.0.0.1:7777/event", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: "staging-refresh-cookie",
+          runId: "pre-fix",
+          hypothesisId: "C",
+          location: "src/contexts/AuthContext.tsx:29",
+          msg: "[DEBUG] bootstrap fell back to refresh",
+          data: {
+            hasUserState: Boolean(user),
+            isLoadingState: isLoading,
+          },
+          ts: Date.now(),
+        }),
+        keepalive: true,
+      }).catch(() => undefined);
+      // #endregion
       await authApi.refresh();
       return authApi.getCurrentUser();
     }
