@@ -96,7 +96,7 @@ export default function CampaignsPage() {
         <section className="py-24">
           <div className="mx-auto flex max-w-7xl items-center justify-center px-4 text-[#556a66] sm:px-6 lg:px-8">
             <Spinner className="mr-2" />
-            Redirecting to your campaigns dashboard...
+            Redirecting to your campaign dashboard...
           </div>
         </section>
         <PublicSiteFooter />
