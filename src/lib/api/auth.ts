@@ -46,54 +46,24 @@ const mapUser = (user: BackendUser): User => ({
 
 export const authApi = {
   async signIn(identifier: string, password: string): Promise<AuthTokenResponse> {
-    // #region debug-point C:signin-request
-    fetch("http://127.0.0.1:7777/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "staging-refresh-cookie",
-        runId: "pre-fix",
-        hypothesisId: "C",
-        location: "src/lib/api/auth.ts:48",
-        msg: "[DEBUG] signin request started",
-        data: {
-          identifier,
-          apiBaseUrl: process.env.NEXT_PUBLIC_API_URL ?? null,
-        },
-        ts: Date.now(),
-      }),
-      keepalive: true,
-    }).catch(() => undefined);
-    // #endregion
+    // Clear any stale localStorage tokens first
+    setStoredAccessToken(null);
+    
     const response = await apiClient.post<AuthTokenResponse>("/auth/signin", {
       identifier,
       password,
     });
-    // #region debug-point B:signin-response
-    fetch("http://127.0.0.1:7777/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "staging-refresh-cookie",
-        runId: "pre-fix",
-        hypothesisId: "B",
-        location: "src/lib/api/auth.ts:49",
-        msg: "[DEBUG] signin response resolved",
-        data: {
-          hasAccessToken: Boolean(response.data.accessToken),
-          tokenType: response.data.tokenType ?? null,
-          expiresAt: response.data.expiresAt ?? null,
-        },
-        ts: Date.now(),
-      }),
-      keepalive: true,
-    }).catch(() => undefined);
-    // #endregion
-    setStoredAccessToken(response.data.accessToken);
+    
+    // We don't need to store the access token in localStorage anymore because we use HttpOnly cookies!
+    // setStoredAccessToken(response.data.accessToken);
+    
     return response.data;
   },
 
   async signUp(data: AuthFormData): Promise<User> {
+    // Clear any stale localStorage tokens first
+    setStoredAccessToken(null);
+    
     const response = await apiClient.post<SignUpResponse>("/auth/signup", {
       email: data.email,
       password: data.password,
@@ -102,15 +72,24 @@ export const authApi = {
       philanthropic_name: data.philanthropicName,
       phone_number: data.phoneNumber,
     });
-    setStoredAccessToken(response.data.accessToken);
+    
+    // We don't need to store the access token in localStorage anymore because we use HttpOnly cookies!
+    // setStoredAccessToken(response.data.accessToken);
+    
     return mapUser(response.data.user);
   },
 
   async signInWithGoogle(credential: string): Promise<AuthTokenResponse> {
+    // Clear any stale localStorage tokens first
+    setStoredAccessToken(null);
+    
     const response = await apiClient.post<AuthTokenResponse>("/auth/google", {
       credential,
     });
-    setStoredAccessToken(response.data.accessToken);
+    
+    // We don't need to store the access token in localStorage anymore because we use HttpOnly cookies!
+    // setStoredAccessToken(response.data.accessToken);
+    
     return response.data;
   },
 
@@ -118,52 +97,17 @@ export const authApi = {
     try {
       await apiClient.post("/auth/logout");
     } finally {
+      // Clear the localStorage token just to be safe
       setStoredAccessToken(null);
     }
   },
 
   async refresh(): Promise<AuthTokenResponse> {
-    // #region debug-point C:refresh-request
-    fetch("http://127.0.0.1:7777/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "staging-refresh-cookie",
-        runId: "pre-fix",
-        hypothesisId: "C",
-        location: "src/lib/api/auth.ts:86",
-        msg: "[DEBUG] refresh request started",
-        data: {
-          hasStoredAccessToken: Boolean(typeof window !== "undefined" && window.localStorage.getItem("torchlife:access-token")),
-          apiBaseUrl: process.env.NEXT_PUBLIC_API_URL ?? null,
-        },
-        ts: Date.now(),
-      }),
-      keepalive: true,
-    }).catch(() => undefined);
-    // #endregion
     const response = await apiClient.post<AuthTokenResponse>("/auth/refresh");
-    // #region debug-point E:refresh-response
-    fetch("http://127.0.0.1:7777/event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId: "staging-refresh-cookie",
-        runId: "pre-fix",
-        hypothesisId: "E",
-        location: "src/lib/api/auth.ts:87",
-        msg: "[DEBUG] refresh response resolved",
-        data: {
-          hasAccessToken: Boolean(response.data.accessToken),
-          tokenType: response.data.tokenType ?? null,
-          expiresAt: response.data.expiresAt ?? null,
-        },
-        ts: Date.now(),
-      }),
-      keepalive: true,
-    }).catch(() => undefined);
-    // #endregion
-    setStoredAccessToken(response.data.accessToken);
+    
+    // We don't need to store the access token in localStorage anymore because we use HttpOnly cookies!
+    // setStoredAccessToken(response.data.accessToken);
+    
     return response.data;
   },
 

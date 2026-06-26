@@ -149,16 +149,14 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
-    const accessToken = getStoredAccessToken();
     const headers = new Headers(options.headers ?? {});
 
     if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
       headers.set("Content-Type", "application/json");
     }
 
-    if (accessToken && !headers.has("Authorization")) {
-      headers.set("Authorization", `Bearer ${accessToken}`);
-    }
+    // NOTE: We are NOT adding Authorization header here anymore!
+    // We use HttpOnly cookies for authentication exclusively!
 
     const config: RequestInit = {
       credentials: "include",
@@ -236,11 +234,8 @@ class ApiClient {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
         xhr.withCredentials = true;
-        const accessToken = getStoredAccessToken();
 
-        if (accessToken) {
-          xhr.setRequestHeader("Authorization", `Bearer ${accessToken}`);
-        }
+        // NOTE: We are NOT adding Authorization header here anymore!
 
         xhr.upload.onprogress = (event) => {
           if (!event.lengthComputable) {
@@ -284,13 +279,12 @@ class ApiClient {
       });
     }
 
-    const accessToken = getStoredAccessToken();
+    // NOTE: We are NOT adding Authorization header here anymore!
 
     const config: RequestInit = {
       method: "POST",
       credentials: "include",
       body: formData,
-      headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
     };
 
     try {

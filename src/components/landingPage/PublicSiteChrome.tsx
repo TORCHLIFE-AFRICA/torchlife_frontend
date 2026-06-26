@@ -121,7 +121,7 @@ export function PublicSiteHeader() {
       </header>
 
       {isMenuOpen ? (
-        <div className="fixed inset-0 top-[73px] z-40 bg-[#091816]/25 backdrop-blur-[2px] lg:hidden">
+        <div className="fixed inset-0 top-[73px] z-60 bg-[#091816]/25 backdrop-blur-[2px] lg:hidden">
           <button
             type="button"
             aria-label="Close navigation overlay"

@@ -591,30 +591,30 @@ export function LandingPageExperience() {
                   sizes="(max-width: 1024px) 100vw, 1400px"
                   className="h-[24rem] w-full object-cover grayscale sm:h-[32rem] xl:h-[40rem]"
                 />
-                <div className="absolute inset-x-0 bottom-0 hidden p-4 sm:block sm:p-6">
-                  <div className="grid gap-3 rounded-[1.25rem] border border-white/15 bg-[#10211f]/72 p-4 text-white backdrop-blur lg:grid-cols-3">
+                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 lg:p-6">
+                  <div className="grid gap-2 sm:gap-3 rounded-[1rem] sm:rounded-[1.25rem] border border-white/15 bg-[#10211f]/72 p-3 sm:p-4 text-white backdrop-blur lg:grid-cols-3">
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.22em] text-white/60">
+                      <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-white/60">
                         Available now
                       </p>
-                      <p className="mt-2 text-2xl font-semibold">{featuredCampaigns.length}</p>
-                      <p className="text-sm text-white/72">live campaigns featured on the homepage</p>
+                      <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-semibold">{featuredCampaigns.length}</p>
+                      <p className="text-xs sm:text-sm text-white/72">live campaigns featured on the homepage</p>
                     </div>
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.22em] text-white/60">
+                      <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-white/60">
                         Recently raised
                       </p>
-                      <p className="mt-2 text-2xl font-semibold">
+                      <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-semibold">
                         {formatMoney(recentRaisedTotal || 0, "NGN")}
                       </p>
-                      <p className="text-sm text-white/72">We have a target that is beyond money.</p>
+                      <p className="text-xs sm:text-sm text-white/72">We have a target that is beyond money.</p>
                     </div>
-                    <div>
-                      <p className="text-[11px] uppercase tracking-[0.22em] text-white/60">
+                    <div className="hidden sm:block">
+                      <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-white/60">
                         Supporters counted
                       </p>
-                      <p className="mt-2 text-2xl font-semibold">{totalDonorsAcrossFeatured}</p>
-                      <p className="text-sm text-white/72">We have philanthropists who care.</p>
+                      <p className="mt-1 sm:mt-2 text-xl sm:text-2xl font-semibold">{totalDonorsAcrossFeatured}</p>
+                      <p className="text-xs sm:text-sm text-white/72">We have philanthropists who care.</p>
                     </div>
                   </div>
                 </div>
