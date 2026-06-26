@@ -34,10 +34,10 @@ import { EmptyState } from "@/src/components/ui/empty-state";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Progress } from "@/src/components/ui/progress";
-import { Skeleton } from "@/src/components/ui/skeleton";
 import { Switch } from "@/src/components/ui/switch";
 import { Textarea } from "@/src/components/ui/textarea";
 import { CampaignImage } from "@/src/components/shared/CampaignImage";
+import BrandedScreenLoader from "@/src/components/shared/BrandedScreenLoader";
 import CountdownLabel from "@/src/components/shared/CountdownLabel";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { campaignApi } from "@/src/lib/api/campaigns";
@@ -241,42 +241,6 @@ function ShareModal({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function CampaignDetailSkeleton() {
-  return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-3 rounded-3xl border bg-card p-4 shadow-sm sm:p-6">
-        <Skeleton className="h-5 w-32" />
-        <Skeleton className="h-10 w-full max-w-3xl" />
-        <Skeleton className="h-4 w-full max-w-2xl" />
-        <div className="flex flex-wrap gap-2">
-          <Skeleton className="h-10 w-40" />
-          <Skeleton className="h-10 w-32" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-      </div>
-      <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
-        <div className="space-y-6">
-          <Skeleton className="h-[320px] w-full rounded-3xl sm:h-[420px]" />
-          <Skeleton className="h-8 w-52" />
-          <Skeleton className="h-5 w-full" />
-          <Skeleton className="h-5 w-full" />
-          <Skeleton className="h-5 w-4/5" />
-          <div className="grid gap-4 md:grid-cols-2">
-            <Skeleton className="h-36 rounded-3xl" />
-            <Skeleton className="h-36 rounded-3xl" />
-          </div>
-          <Skeleton className="h-44 rounded-3xl" />
-        </div>
-        <div className="space-y-6">
-          <Skeleton className="h-72 rounded-3xl" />
-          <Skeleton className="h-56 rounded-3xl" />
-          <Skeleton className="h-44 rounded-3xl" />
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -966,7 +930,7 @@ export default function CampaignPageContent({
   ].filter((value): value is string => Boolean(value));
 
   if (isLoading) {
-    return <CampaignDetailSkeleton />;
+    return <BrandedScreenLoader message="Loading campaign details..." fullScreen={false} />;
   }
 
   if (!campaign || error) {

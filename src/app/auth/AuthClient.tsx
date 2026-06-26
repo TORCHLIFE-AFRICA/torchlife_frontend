@@ -7,8 +7,17 @@ import { Navbar } from "@/src/components/landingPage/navbar";
 import { Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/src/components/ui/input-otp";
 import { Label } from "@/src/components/ui/label";
+import { authApi } from "@/src/lib/api/auth";
 import { ApiClientError } from "@/src/lib/api/client";
 import { notifyError, notifyInfo, notifySuccess } from "@/src/lib/notify";
 import Link from "next/link";
@@ -76,10 +85,18 @@ export default function AuthClient() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [verificationUserId, setVerificationUserId] = useState("");
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [verificationOtp, setVerificationOtp] = useState("");
+  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [verificationSuccess, setVerificationSuccess] = useState<string | null>(null);
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isResendingOtp, setIsResendingOtp] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, login, loginWithGoogle, register, isAuthenticated, isLoading } = useAuth();
+  const { user, login, loginWithGoogle, refreshMe, register, isAuthenticated, isLoading } = useAuth();
   const signIn = searchParams.get("auth");
   const returnUrlParam = searchParams.get("returnUrl");
   const [googleReady, setGoogleReady] = useState(false);
@@ -96,17 +113,19 @@ export default function AuthClient() {
     return returnUrlParam;
   };
 
-  const getVerificationRoute = (userId: string, userEmail: string) => {
-    const query = new URLSearchParams({
-      userId,
-      email: userEmail,
-    });
+  const maskedVerificationEmail = React.useMemo(() => {
+    if (!verificationEmail.includes("@")) return verificationEmail;
+    const [name, domain] = verificationEmail.split("@");
+    return `${name.slice(0, 2)}${"*".repeat(Math.max(1, name.length - 2))}@${domain}`;
+  }, [verificationEmail]);
 
-    if (returnUrlParam) {
-      query.set("returnUrl", getSafeReturnUrl());
-    }
-
-    return `/auth/verify-email?${query.toString()}`;
+  const openVerificationModal = (userId: string, userEmail: string) => {
+    setVerificationUserId(userId);
+    setVerificationEmail(userEmail);
+    setVerificationOtp("");
+    setVerificationError(null);
+    setVerificationSuccess(null);
+    setIsOtpModalOpen(true);
   };
 
   const handleUnverifiedAccount = (submitError: unknown) => {
@@ -135,8 +154,8 @@ export default function AuthClient() {
       return false;
     }
 
-    notifyInfo("Account not verified", "We redirected you to complete email verification.");
-    router.replace(getVerificationRoute(unverifiedUserId, unverifiedEmail));
+    notifyInfo("Account not verified", "Enter the code sent to your email to finish verification.");
+    openVerificationModal(unverifiedUserId, unverifiedEmail);
     return true;
   };
 
@@ -148,17 +167,78 @@ export default function AuthClient() {
     try {
       const recoveredUser = await login(normalizedEmail, password);
       notifyInfo("Account recovered", "Your account was created. Continue with email verification.");
-      router.replace(
-        recoveredUser.isVerified
-          ? getSafeReturnUrl()
-          : getVerificationRoute(recoveredUser.id, recoveredUser.email)
-      );
+      if (recoveredUser.isVerified) {
+        router.replace(getSafeReturnUrl());
+      } else {
+        openVerificationModal(recoveredUser.id, recoveredUser.email);
+      }
       return true;
     } catch (recoveryError) {
       if (handleUnverifiedAccount(recoveryError)) {
         return true;
       }
       return false;
+    }
+  };
+
+  const handleVerifyOtp = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setVerificationError(null);
+    setVerificationSuccess(null);
+
+    const parsedOtp = Number(verificationOtp);
+    if (!Number.isInteger(parsedOtp) || verificationOtp.trim().length !== 6) {
+      setVerificationError("Enter the 6-digit OTP sent to your email.");
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    try {
+      await authApi.verifyEmailOtp(verificationUserId, parsedOtp);
+      setVerificationSuccess("Email verified successfully. Redirecting now...");
+      notifySuccess("Email verified", "Your account is ready.");
+      await refreshMe().catch(() => undefined);
+      router.replace(getSafeReturnUrl());
+    } catch (submitError) {
+      setVerificationError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Unable to verify OTP right now."
+      );
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setVerificationError(null);
+    setVerificationSuccess(null);
+    setIsResendingOtp(true);
+    try {
+      await authApi.resendEmailOtp(verificationEmail);
+      setVerificationSuccess("A new OTP has been sent to your email.");
+    } catch (submitError) {
+      setVerificationError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Unable to resend OTP right now."
+      );
+    } finally {
+      setIsResendingOtp(false);
+    }
+  };
+
+  const handleWrongAccount = async () => {
+    setVerificationOtp("");
+    setVerificationError(null);
+    setVerificationSuccess(null);
+
+    try {
+      await authApi.logout();
+    } catch {
+    } finally {
+      setIsOtpModalOpen(false);
+      setIsSignUp(true);
     }
   };
 
@@ -177,11 +257,11 @@ export default function AuthClient() {
         setIsSubmitting(true);
         try {
           const user = await loginWithGoogle(response.credential);
-          router.replace(
-            user.isVerified
-              ? getSafeReturnUrl()
-              : getVerificationRoute(user.id, user.email)
-          );
+          if (user.isVerified) {
+            router.replace(getSafeReturnUrl());
+          } else {
+            openVerificationModal(user.id, user.email);
+          }
         } catch (submitError) {
           setError(
             submitError instanceof Error
@@ -215,11 +295,12 @@ export default function AuthClient() {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated && user) {
-      router.replace(
-        user.isVerified
-          ? getSafeReturnUrl()
-          : getVerificationRoute(user.id, user.email)
-      );
+      if (user.isVerified) {
+        router.replace(getSafeReturnUrl());
+        return;
+      }
+
+      openVerificationModal(user.id, user.email);
     }
   }, [isAuthenticated, isLoading, router, user]);
 
@@ -241,15 +322,15 @@ export default function AuthClient() {
           phoneNumber,
         });
         notifySuccess("Account created", "Check your email to complete verification.");
-        router.replace(getVerificationRoute(user.id, user.email));
+        openVerificationModal(user.id, user.email);
       } else {
         const user = await login(email, password);
         notifySuccess("Login successful", "Welcome back to TorchLife.");
-        router.replace(
-          user.isVerified
-            ? getSafeReturnUrl()
-            : getVerificationRoute(user.id, user.email)
-        );
+        if (user.isVerified) {
+          router.replace(getSafeReturnUrl());
+        } else {
+          openVerificationModal(user.id, user.email);
+        }
       }
     } catch (submitError) {
       if (
@@ -453,7 +534,7 @@ export default function AuthClient() {
                       href="/auth/reset-password"
                       className="text-sm font-medium text-primary underline-offset-4 hover:underline"
                     >
-                      Reset password?
+                      Forgot password?
                     </Link>
                   </div>
                 ) : null}
@@ -505,6 +586,74 @@ export default function AuthClient() {
           </motion.div>
         </div>
       </section>
+      <Dialog open={isOtpModalOpen} onOpenChange={setIsOtpModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">Verify your email</DialogTitle>
+            <DialogDescription className="text-center">
+              Enter the 6-digit code sent to {maskedVerificationEmail || "your email"} to finish your account setup.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleVerifyOtp} className="space-y-4">
+            <div className="flex justify-center">
+              <InputOTP
+                value={verificationOtp}
+                onChange={(value) => setVerificationOtp(value.replace(/\D/g, "").slice(0, 6))}
+                maxLength={6}
+                containerClassName="justify-center"
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+
+            {verificationError ? (
+              <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                {verificationError}
+              </p>
+            ) : null}
+
+            {verificationSuccess ? (
+              <p className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300">
+                {verificationSuccess}
+              </p>
+            ) : null}
+
+            <div className="space-y-3">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isVerifyingOtp || verificationOtp.trim().length !== 6}
+              >
+                {isVerifyingOtp ? "Verifying..." : "Verify Email"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handleResendOtp}
+                disabled={isResendingOtp || !verificationEmail}
+              >
+                {isResendingOtp ? "Resending..." : "Resend OTP"}
+              </Button>
+              <button
+                type="button"
+                className="block w-full text-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+                onClick={() => void handleWrongAccount()}
+              >
+                Use another account
+              </button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

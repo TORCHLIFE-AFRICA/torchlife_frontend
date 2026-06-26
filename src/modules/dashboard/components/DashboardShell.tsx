@@ -16,6 +16,7 @@ import {
 
 import Footer from "@/src/components/dashboard/Footer";
 import Navbar from "@/src/components/dashboard/Navbar";
+import BrandedScreenLoader from "@/src/components/shared/BrandedScreenLoader";
 import Sidebar, { type SidebarItem } from "@/src/components/dashboard/Sidebar";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { UserRole } from "@/src/types";
@@ -130,9 +131,9 @@ export default function DashboardShell({
 
   if (isLoading || !isAuthenticated || !user || !user.isVerified) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
-        Loading your dashboard...
-      </div>
+      <BrandedScreenLoader
+        message={!isAuthenticated && !isLoading ? "Redirecting to sign in..." : "Loading your dashboard..."}
+      />
     );
   }
 

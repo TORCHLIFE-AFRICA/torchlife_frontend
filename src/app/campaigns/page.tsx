@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PublicSiteFooter, PublicSiteHeader } from "@/src/components/landingPage/PublicSiteChrome";
 import { DashboardCampaignCardSkeleton } from "@/src/components/dashboard/dashboard-skeletons";
+import BrandedScreenLoader from "@/src/components/shared/BrandedScreenLoader";
 import { CampaignImage } from "@/src/components/shared/CampaignImage";
 import CountdownLabel from "@/src/components/shared/CountdownLabel";
 import { Button } from "@/src/components/ui/button";
-import { Spinner } from "@/src/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert";
 import { campaignApi } from "@/src/lib/api/campaigns";
 import type { Campaign } from "@/src/types";
@@ -93,12 +93,11 @@ export default function CampaignsPage() {
     return (
       <div className="min-h-screen bg-[#f7f2ea]">
         <PublicSiteHeader />
-        <section className="py-24">
-          <div className="mx-auto flex max-w-7xl items-center justify-center px-4 text-[#556a66] sm:px-6 lg:px-8">
-            <Spinner className="mr-2" />
-            Redirecting to your campaign dashboard...
-          </div>
-        </section>
+        <BrandedScreenLoader
+          fullScreen={false}
+          className="min-h-[50vh]"
+          message="Redirecting to your campaign dashboard..."
+        />
         <PublicSiteFooter />
       </div>
     );

@@ -1,10 +1,10 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { Navbar } from "@/src/components/landingPage/navbar";
+import BrandedScreenLoader from "@/src/components/shared/BrandedScreenLoader";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
@@ -180,13 +180,7 @@ export default function VerifyEmailPage() {
       fallback={
         <div className="min-h-screen bg-background">
           <Navbar />
-          <section className="py-16 md:py-24">
-            <div className="container mx-auto px-4 lg:px-8">
-              <div className="mx-auto max-w-md rounded-2xl border bg-card p-8 shadow-lg">
-                <p className="text-center text-sm text-muted-foreground">Loading verification...</p>
-              </div>
-            </div>
-          </section>
+          <BrandedScreenLoader fullScreen={false} className="min-h-[50vh]" message="Loading verification..." />
         </div>
       }
     >

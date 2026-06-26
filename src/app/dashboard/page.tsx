@@ -11,6 +11,7 @@ import DonationsContent from "@/src/components/dashboard/donations/DonationsCont
 import DocumentRequestsContent from "@/src/components/dashboard/DocumentRequestsContent";
 import ProfileContent from "@/src/components/dashboard/ProfileContent";
 import UsersContent from "@/src/components/dashboard/UsersContent";
+import BrandedScreenLoader from "@/src/components/shared/BrandedScreenLoader";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { UserRole } from "@/src/types";
 import DashboardShell from "@/src/modules/dashboard/components/DashboardShell";
@@ -88,7 +89,7 @@ function DashboardPageContent() {
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<div className="min-h-[40vh] bg-background" />}>
+    <Suspense fallback={<BrandedScreenLoader message="Loading your dashboard..." fullScreen={false} />}>
       <DashboardPageContent />
     </Suspense>
   );

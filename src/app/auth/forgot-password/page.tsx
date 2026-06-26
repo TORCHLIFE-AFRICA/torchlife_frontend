@@ -12,9 +12,7 @@ import { authApi } from "@/src/lib/api/auth";
 
 export default function ForgotPasswordPage() {
   const [identifier, setIdentifier] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [showOldPassword, setShowOldPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -34,14 +32,9 @@ export default function ForgotPasswordPage() {
 
     setIsSubmitting(true);
     try {
-      await authApi.resetPassword(
-        identifier.trim(),
-        oldPassword,
-        newPassword
-      );
+      await authApi.forgetPassword(identifier.trim(), newPassword);
       setSuccess("Password reset successful. You can now sign in with your new password.");
       setIdentifier("");
-      setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (submitError) {
@@ -64,7 +57,7 @@ export default function ForgotPasswordPage() {
           <div className="mx-auto max-w-md rounded-2xl border bg-card p-8 shadow-lg">
             <h1 className="text-2xl font-bold text-center">Reset Password</h1>
             <p className="mt-3 text-center text-sm text-muted-foreground">
-              Update your password using your email address or phone number, your current password, and a new password.
+              Enter your email address or phone number and choose a new password to continue.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -77,31 +70,6 @@ export default function ForgotPasswordPage() {
                   onChange={(event) => setIdentifier(event.target.value)}
                   placeholder="you@example.com or +2348012345678"
                 />
-              </div>
-
-              <div>
-                <Label htmlFor="old-password">Current Password</Label>
-                <div className="relative">
-                  <Input
-                    id="old-password"
-                    required
-                    minLength={8}
-                    type={showOldPassword ? "text" : "password"}
-                    value={oldPassword}
-                    onChange={(event) => setOldPassword(event.target.value)}
-                    className="pr-10"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    className="absolute right-1 top-1/2 -translate-y-1/2"
-                    aria-label={showOldPassword ? "Hide password" : "Show password"}
-                    onClick={() => setShowOldPassword((previous) => !previous)}
-                  >
-                    {showOldPassword ? <EyeOff /> : <Eye />}
-                  </Button>
-                </div>
               </div>
 
               <div>

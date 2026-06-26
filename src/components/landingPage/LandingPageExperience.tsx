@@ -13,9 +13,9 @@ import {
 } from "lucide-react";
 
 import { PublicSiteFooter, PublicSiteHeader } from "@/src/components/landingPage/PublicSiteChrome";
+import { DashboardCampaignCardSkeleton } from "@/src/components/dashboard/dashboard-skeletons";
 import { CampaignImage } from "@/src/components/shared/CampaignImage";
 import { Button } from "@/src/components/ui/button";
-import { Spinner } from "@/src/components/ui/spinner";
 import { campaignApi } from "@/src/lib/api/campaigns";
 import { paymentApi, type DonationTickerItem } from "@/src/lib/api/payments";
 import type { Campaign } from "@/src/types";
@@ -654,9 +654,10 @@ export function LandingPageExperience() {
 
           <div className="mt-10">
             {isCampaignLoading ? (
-              <div className="flex items-center justify-center rounded-[2rem] border border-black/5 bg-white px-6 py-16 text-sm text-[#556a66]">
-                <Spinner className="mr-2" />
-                Loading featured campaigns...
+              <div className="grid gap-5 xl:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <DashboardCampaignCardSkeleton key={`featured-skeleton-${index}`} />
+                ))}
               </div>
             ) : campaignError ? (
               <div className="rounded-[2rem] border border-[#e7d4cc] bg-[#fff8f5] px-6 py-8 text-center text-sm text-[#9f4334]">
