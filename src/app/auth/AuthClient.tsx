@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Script from "next/script";
 import { Navbar } from "@/src/components/landingPage/navbar";
-import { Eye, EyeOff } from "lucide-react";
+import { CheckCircle2, Circle, Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
 import {
@@ -104,6 +104,29 @@ export default function AuthClient() {
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const googleEnabled = googleReady && !googleLoadFailed && !!googleClientId;
   const normalizedEmail = email.trim().toLowerCase();
+  const passwordChecks = [
+    {
+      label: "At least 8 characters",
+      passed: password.length >= 8,
+    },
+    {
+      label: "At least one uppercase letter",
+      passed: /[A-Z]/.test(password),
+    },
+    {
+      label: "At least one lowercase letter",
+      passed: /[a-z]/.test(password),
+    },
+    {
+      label: "At least one number",
+      passed: /\d/.test(password),
+    },
+    {
+      label: "At least one symbol",
+      passed: /[^A-Za-z0-9]/.test(password),
+    },
+  ];
+  const isPasswordStrong = passwordChecks.every((item) => item.passed);
 
   const getSafeReturnUrl = () => {
     if (!returnUrlParam || !returnUrlParam.startsWith("/") || returnUrlParam.startsWith("//")) {
@@ -313,6 +336,9 @@ export default function AuthClient() {
         if (password !== confirmPassword) {
           throw new Error("Passwords do not match.");
         }
+        if (!isPasswordStrong) {
+          throw new Error("Use a stronger password that matches all the password rules.");
+        }
         const user = await register({
           email,
           password,
@@ -486,6 +512,30 @@ export default function AuthClient() {
                       {showPassword ? <EyeOff /> : <Eye />}
                     </Button>
                   </div>
+                  {isSignUp ? (
+                    <div className="mt-3 rounded-xl border border-border/70 bg-muted/30 px-4 py-4">
+                      <p className="text-sm font-medium text-foreground">
+                        Password must include:
+                      </p>
+                      <div className="mt-3 grid gap-2">
+                        {passwordChecks.map((item) => (
+                          <div
+                            key={item.label}
+                            className="flex items-center gap-2 text-sm text-muted-foreground"
+                          >
+                            {item.passed ? (
+                              <CheckCircle2 className="size-4 text-emerald-600" />
+                            ) : (
+                              <Circle className="size-4 text-muted-foreground/70" />
+                            )}
+                            <span className={item.passed ? "text-foreground" : ""}>
+                              {item.label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
 
                 {isSignUp ? (
@@ -601,18 +651,22 @@ export default function AuthClient() {
                 value={verificationOtp}
                 onChange={(value) => setVerificationOtp(value.replace(/\D/g, "").slice(0, 6))}
                 maxLength={6}
+                inputMode="numeric"
                 containerClassName="justify-center"
               >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
+                <InputOTPGroup className="gap-2">
+                  <InputOTPSlot index={0} className="h-12 w-12 rounded-xl border text-base font-semibold first:rounded-xl first:border last:rounded-xl" />
+                  <InputOTPSlot index={1} className="h-12 w-12 rounded-xl border text-base font-semibold first:rounded-xl first:border last:rounded-xl" />
+                  <InputOTPSlot index={2} className="h-12 w-12 rounded-xl border text-base font-semibold first:rounded-xl first:border last:rounded-xl" />
+                  <InputOTPSlot index={3} className="h-12 w-12 rounded-xl border text-base font-semibold first:rounded-xl first:border last:rounded-xl" />
+                  <InputOTPSlot index={4} className="h-12 w-12 rounded-xl border text-base font-semibold first:rounded-xl first:border last:rounded-xl" />
+                  <InputOTPSlot index={5} className="h-12 w-12 rounded-xl border text-base font-semibold first:rounded-xl first:border last:rounded-xl" />
                 </InputOTPGroup>
               </InputOTP>
             </div>
+            <p className="text-center text-xs text-muted-foreground">
+              You can type, paste, or backspace naturally across all 6 boxes.
+            </p>
 
             {verificationError ? (
               <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
