@@ -1,6 +1,7 @@
 import { Navbar } from "@/src/components/landingPage/navbar";
 import { HeroSection } from "@/src/components/landingPage/hero-section";
 import { UseCasesSection } from "@/src/components/landingPage/use-cases-section";
+import { WhyFamiliesChoose } from "@/src/components/sections/WhyFamiliesChoose";
 import { CoreValuesSection } from "@/src/components/landingPage/core-values-section";
 import { PartnersSection } from "@/src/components/landingPage/partners-section";
 import { StepsToHelpSection } from "@/src/components/landingPage/steps-to-help-section";
@@ -16,6 +17,7 @@ export default function Home() {
       <HeroSection />
       <CampaignSamplesSection title="Campaign Sample" />
       <UseCasesSection />
+      <WhyFamiliesChoose />
       <CoreValuesSection />
       <PartnersSection />
       <StepsToHelpSection />
