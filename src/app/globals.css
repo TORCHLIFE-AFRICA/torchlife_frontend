@@ -148,3 +148,47 @@
   animation: landing-chip-float 6.8s ease-in-out infinite;
   will-change: transform;
 }
+
+/*
+ * Drawn on an SVG stroke with pathLength="1": the ring fills over one dwell.
+ * Referenced from a class rather than an inline style, because unreferenced
+ * @keyframes are stripped from the built CSS.
+ */
+@keyframes autoplay-step-timer {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.autoplay-step-timer {
+  animation: autoplay-step-timer var(--step-duration, 6s) linear forwards;
+}
+
+/*
+ * The track carries two copies of the partner list, so travelling half its
+ * width lands exactly where it started and the loop never shows a seam.
+ */
+@keyframes partner-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.partner-marquee {
+  animation: partner-marquee var(--marquee-duration, 38s) linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-chip-float,
+  .autoplay-step-timer,
+  .partner-marquee {
+    animation: none;
+  }
+}

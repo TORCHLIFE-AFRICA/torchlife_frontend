@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
-  CirclePlay,
   HeartHandshake,
   ShieldCheck,
   ShieldPlus,
@@ -13,6 +12,12 @@ import {
 } from "lucide-react";
 
 import { PublicSiteFooter, PublicSiteHeader } from "@/src/components/landingPage/PublicSiteChrome";
+import { ValueSolutionSection } from "@/src/components/landingPage/value-solution/ValueSolutionSection";
+import { HowItWorksSection } from "@/src/components/landingPage/how-it-works/HowItWorksSection";
+import { JoinSection } from "@/src/components/landingPage/join/JoinSection";
+import { MetricsSection } from "@/src/components/landingPage/metrics/MetricsSection";
+import { PartnersSection } from "@/src/components/landingPage/partners/PartnersSection";
+import { TrustSection } from "@/src/components/landingPage/trust/TrustSection";
 import { DashboardCampaignCardSkeleton } from "@/src/components/dashboard/dashboard-skeletons";
 import { CampaignImage } from "@/src/components/shared/CampaignImage";
 import { Button } from "@/src/components/ui/button";
@@ -51,8 +56,6 @@ const campaignThemes = [
   },
 ] as const;
 
-const youtubeChannelUrl = process.env.NEXT_PUBLIC_TORCHLIFE_YOUTUBE_URL?.trim();
-const youtubeEmbedUrl = process.env.NEXT_PUBLIC_TORCHLIFE_YOUTUBE_EMBED_URL?.trim();
 const baseRecentlyRaisedAmount = 570000 + 107300;
 
 const fallbackDonations: DonationTickerItem[] = [
@@ -256,30 +259,31 @@ const fallbackDonations: DonationTickerItem[] = [
   },
 ];
 
-const involvementSteps = [
-  {
-    title: "View a campaign",
-    description: "Open a verified fundraiser for urgent maternal care when treatment cannot wait.",
-    icon: ShieldPlus,
-  },
-  {
-    title: "Share the story",
-    description: "Push trusted campaign links to family, communities, and your wider network quickly.",
-    icon: ArrowRight,
-  },
-  {
-    title: "Donate securely",
-    description: "Support approved cases through the public donation flow without unnecessary friction.",
-    icon: Wallet,
-  },
-  {
-    title: "Track impact",
-    description: "See progress clearly and help funds move toward the hospital facility that needs it.",
-    icon: HeartHandshake,
-  },
-];
+// Data for the hidden "How you can help" section; see the commented block in
+// the markup below.
+// const involvementSteps = [
+//   {
+//     title: "View a campaign",
+//     description: "Open a verified fundraiser for urgent maternal care when treatment cannot wait.",
+//     icon: ShieldPlus,
+//   },
+//   {
+//     title: "Share the story",
+//     description: "Push trusted campaign links to family, communities, and your wider network quickly.",
+//     icon: ArrowRight,
+//   },
+//   {
+//     title: "Donate securely",
+//     description: "Support approved cases through the public donation flow without unnecessary friction.",
+//     icon: Wallet,
+//   },
+//   {
+//     title: "Track impact",
+//     description: "See progress clearly and help funds move toward the hospital facility that needs it.",
+//     icon: HeartHandshake,
+//   },
+// ];
 
-const partnerCompanies = ["Polaris Bank", "Paystack", "Breeze"];
 const chipAccentClasses = [
   "ring-[#f59e0b]/30",
   "ring-[#14b8a6]/30",
@@ -292,36 +296,6 @@ const donorChipPositions = [
   "left-2 bottom-2 sm:left-5 sm:bottom-5 lg:left-7 lg:bottom-7",
   "right-2 bottom-2 sm:right-5 sm:bottom-5 lg:right-7 lg:bottom-7",
 ] as const;
-
-function resolveYoutubeEmbedUrl() {
-  const source = youtubeEmbedUrl || youtubeChannelUrl || "";
-
-  if (!source) return "";
-
-  if (source.includes("/embed/")) {
-    return source;
-  }
-
-  try {
-    const url = new URL(source);
-    const videoId = url.searchParams.get("v");
-
-    if (videoId) {
-      return `https://www.youtube-nocookie.com/embed/${videoId}`;
-    }
-
-    if (url.hostname === "youtu.be") {
-      const shortId = url.pathname.replace("/", "").trim();
-      if (shortId) {
-        return `https://www.youtube-nocookie.com/embed/${shortId}`;
-      }
-    }
-  } catch {
-    return "";
-  }
-
-  return "";
-}
 
 function buildHeroDonations(items: DonationTickerItem[]) {
   const deduped = new Map<string, DonationTickerItem>();
@@ -394,8 +368,13 @@ export function LandingPageExperience() {
   useEffect(() => {
     let mounted = true;
 
-    const loadCampaigns = async () => {
-      setIsCampaignLoading(true);
+    // Re-read on the interval below so the featured cards and the hero totals
+    // keep up with the records. A silent pass leaves what is already on screen
+    // in place instead of flashing skeletons over it.
+    const loadCampaigns = async ({ silent = false } = {}) => {
+      if (!silent) {
+        setIsCampaignLoading(true);
+      }
       setCampaignError(null);
 
       try {
@@ -408,7 +387,7 @@ export function LandingPageExperience() {
           error instanceof Error ? error.message : "Unable to load featured campaigns right now."
         );
       } finally {
-        if (mounted) {
+        if (mounted && !silent) {
           setIsCampaignLoading(false);
         }
       }
@@ -427,13 +406,13 @@ export function LandingPageExperience() {
 
     void Promise.all([loadCampaigns(), loadDonations()]);
 
-    const refreshTicker = window.setInterval(() => {
-      void loadDonations();
+    const refreshFeeds = window.setInterval(() => {
+      void Promise.all([loadCampaigns({ silent: true }), loadDonations()]);
     }, 60000);
 
     return () => {
       mounted = false;
-      window.clearInterval(refreshTicker);
+      window.clearInterval(refreshFeeds);
     };
   }, []);
 
@@ -444,7 +423,6 @@ export function LandingPageExperience() {
     () => getCornerDonations(heroDonations, mobileDonationIndex),
     [heroDonations, mobileDonationIndex]
   );
-  const resolvedYoutubeEmbedUrl = useMemo(() => resolveYoutubeEmbedUrl(), []);
 
   const totalRaisedAcrossFeatured = useMemo(
     () =>
@@ -485,12 +463,12 @@ export function LandingPageExperience() {
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto max-w-3xl text-center">
             <span className="inline-flex items-center rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#0f766e] shadow-sm ring-1 ring-black/5">
-              Africa's first Pregnancy Crowdfund
+              Pregnancy Healthcare Support
             </span>
             <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tight text-[#132726] sm:text-5xl lg:text-6xl">
               The{" "}
               <span className="relative inline-block pr-1">
-                Trusted
+                Better
                 <span className="pointer-events-none absolute -bottom-2 left-0 right-0 h-4 w-full text-[#c89a2b]/90">
                   <svg viewBox="0 0 160 18" aria-hidden="true" className="h-full w-full">
                     <path
@@ -506,8 +484,8 @@ export function LandingPageExperience() {
               Way To Solve Pregnancy Crisis
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#556a66] sm:text-lg">
-              Fast, transparent fundraising for pregnancy care. TorchLife helps donors
-              support verified campaigns without friction, while every case stays easy to track.
+              TorchLife makes it easier to discover genuine healthcare needs, support
+              pregnant women, and see how your contribution makes a difference.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link href="/campaigns">
@@ -625,7 +603,11 @@ export function LandingPageExperience() {
         </div>
       </section>
 
-      <section id="campaigns" className="px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
+      <ValueSolutionSection />
+
+      <HowItWorksSection />
+
+      <section id="campaigns" className="scroll-mt-40 px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0f766e]">
@@ -780,41 +762,14 @@ export function LandingPageExperience() {
         </div>
       </section>
 
-      <section id="youtube" className="px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-[#071c1a] p-6 text-white shadow-[0_30px_100px_-44px_rgba(7,28,26,0.9)] sm:p-8 lg:p-10">
-          <div className="mx-auto max-w-4xl">
-            <div className="text-center">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#d9c483]">
-                <CirclePlay className="size-4" />
-                Some of our real stories
-              </span>
-              <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-                Watch real campaign stories and updates.
-              </h2>
-            </div>
+      <TrustSection />
 
-            <div className="mt-8 overflow-hidden rounded-[1.75rem] border border-white/10 bg-black shadow-[0_28px_90px_-40px_rgba(7,28,26,0.95)]">
-              <div className="aspect-video w-full">
-                {resolvedYoutubeEmbedUrl ? (
-                  <iframe
-                    src={resolvedYoutubeEmbedUrl}
-                    title="Some of our real stories"
-                    className="h-full w-full"
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center bg-[#091816] px-6 text-center text-sm text-white/70">
-                    Add `NEXT_PUBLIC_TORCHLIFE_YOUTUBE_EMBED_URL` or a YouTube watch URL to show the playable video canvas here.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <MetricsSection />
+
+      {/* "How you can help" — hidden for now. Restoring it means uncommenting
+          this block and the `involvementSteps` list near the top of the file;
+          the icons it uses are still imported. Note the nav has no link to
+          /#get-involved, so nothing points at this anchor while it is out.
 
       <section id="get-involved" className="px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
         <div className="mx-auto max-w-7xl rounded-[2rem] bg-white/90 p-6 shadow-[0_24px_80px_-44px_rgba(8,28,25,0.45)] ring-1 ring-black/5 sm:p-8 lg:p-10">
@@ -841,30 +796,11 @@ export function LandingPageExperience() {
         </div>
       </section>
 
-      <section className="px-4 pb-16 sm:px-6 sm:pb-24 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0f766e]">
-              Partner companies
-            </p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-[#132726] sm:text-4xl">
-              Polaris Bank, Paystack, Breeze
-            </h2>
-          </div>
+      */}
 
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {partnerCompanies.map((partner) => (
-              <div
-                key={partner}
-                className="rounded-[1.75rem] border border-[#dfd5c3] bg-[#f3ece1] px-6 py-8 text-center shadow-sm"
-              >
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#6f817d]">Partner</p>
-                <p className="mt-3 text-2xl font-semibold text-[#132726]">{partner}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PartnersSection />
+
+      <JoinSection />
 
       <PublicSiteFooter />
     </main>
