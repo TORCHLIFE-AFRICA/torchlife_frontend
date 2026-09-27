@@ -2,19 +2,43 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 import { Button } from "@/src/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/src/components/ui/navigation-menu";
 import { CloudinaryImage } from "../ui/clodinary-image";
 import { CLOUDINARY_ASSETS } from "@/public/assets/staticImages";
+import {
+  GET_INVOLVED_LINKS,
+  PRIMARY_NAV_LINKS,
+  SIGN_IN_HREF,
+  START_CAMPAIGN_HREF,
+  isActivePath,
+} from "./navigation";
 
-const navigationItems = [
-  { label: "Browse Campaigns", href: "/campaigns" },
-  { label: "Featured Cases", href: "/#campaigns" },
-  { label: "YouTube", href: "/#youtube" },
-  { label: "Get Involved", href: "/#get-involved" },
-];
+/**
+ * The shared shadcn navigation-menu styles assume the default token palette, so
+ * the trigger and links are flattened back to the cream public-site treatment.
+ */
+const desktopNavItemClass =
+  "h-auto rounded-none bg-transparent p-0 text-sm font-medium text-[#27413d] transition-colors hover:bg-transparent hover:text-[#0f766e] focus:bg-transparent focus:text-[#0f766e] focus-visible:rounded-sm focus-visible:ring-[#0f766e]/40 data-[active=true]:bg-transparent data-[active=true]:text-[#0f766e] data-[active=true]:hover:bg-transparent data-[active=true]:focus:bg-transparent";
+
+const desktopTriggerClass = `${desktopNavItemClass} data-[state=open]:bg-transparent data-[state=open]:text-[#0f766e] data-[state=open]:hover:bg-transparent data-[state=open]:focus:bg-transparent`;
+
+const dropdownLinkClass =
+  "rounded-xl px-3 py-2 text-sm font-medium text-[#27413d] transition-colors hover:bg-white hover:text-[#0f766e] focus:bg-white focus:text-[#0f766e] focus-visible:ring-[#0f766e]/40 data-[active=true]:bg-white data-[active=true]:text-[#0f766e]";
+
+const mobileLinkClass =
+  "rounded-2xl px-4 py-3 text-sm font-medium text-[#27413d] transition-colors hover:bg-white aria-[current=page]:bg-white aria-[current=page]:text-[#0f766e]";
 
 const socialLinks = [
   {
@@ -60,13 +84,43 @@ const socialLinks = [
 ];
 
 export function PublicSiteHeader() {
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileGetInvolvedOpen, setIsMobileGetInvolvedOpen] = useState(() =>
+    GET_INVOLVED_LINKS.some((item) => isActivePath(pathname, item.href)),
+  );
+
+  const isGetInvolvedActive = GET_INVOLVED_LINKS.some((item) =>
+    isActivePath(pathname, item.href),
+  );
+
+  const closeMenu = () => setIsMenuOpen(false);
+
+  // Route changes are client-side, so the panel has to be dismissed explicitly.
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isMenuOpen]);
 
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-black/5 bg-[#f7f2ea]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3" aria-label="TorchLife home">
             <CloudinaryImage
               publicId={CLOUDINARY_ASSETS.logo}
               alt={"Logo"}
@@ -81,20 +135,52 @@ export function PublicSiteHeader() {
             />
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex">
-            {navigationItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="text-sm font-medium text-[#27413d] transition-colors hover:text-[#0f766e]"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <NavigationMenu
+            aria-label="Main"
+            viewport={false}
+            className="hidden lg:flex"
+          >
+            <NavigationMenuList className="gap-8">
+              <NavigationMenuItem>
+                <NavigationMenuTrigger
+                  className={desktopTriggerClass}
+                  data-active={isGetInvolvedActive || undefined}
+                >
+                  Get Involved
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="left-0 rounded-2xl border border-[#e2d7c2] bg-[#fbf6ee] p-2 shadow-[0_28px_70px_-36px_rgba(8,28,25,0.7)]">
+                  <ul className="grid w-48 gap-1">
+                    {GET_INVOLVED_LINKS.map((item) => (
+                      <li key={item.href}>
+                        <NavigationMenuLink
+                          asChild
+                          active={isActivePath(pathname, item.href)}
+                          className={dropdownLinkClass}
+                        >
+                          <Link href={item.href}>{item.label}</Link>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              {PRIMARY_NAV_LINKS.map((item) => (
+                <NavigationMenuItem key={item.href}>
+                  <NavigationMenuLink
+                    asChild
+                    active={isActivePath(pathname, item.href)}
+                    className={desktopNavItemClass}
+                  >
+                    <Link href={item.href}>{item.label}</Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
 
           <div className="hidden items-center gap-3 lg:flex">
-            <Link href="/auth?auth=signIn">
+            <Link href={SIGN_IN_HREF}>
               <Button
                 variant="ghost"
                 className="rounded-full px-5 text-[#15332e] hover:bg-[#ecdfc0] hover:text-[#15332e]"
@@ -102,9 +188,9 @@ export function PublicSiteHeader() {
                 Sign in
               </Button>
             </Link>
-            <Link href="/auth?auth=signIn&returnUrl=%2Fdashboard%3Ftab%3Dcreate-campaign">
+            <Link href={START_CAMPAIGN_HREF}>
               <Button className="rounded-full bg-[#c89a2b] px-5 text-[#17220f] hover:bg-[#b58b26]">
-                Start a campaign
+                Start a Campaign
               </Button>
             </Link>
           </div>
@@ -112,6 +198,8 @@ export function PublicSiteHeader() {
           <button
             type="button"
             aria-label="Toggle navigation"
+            aria-expanded={isMenuOpen}
+            aria-controls="public-site-mobile-nav"
             className="inline-flex size-11 items-center justify-center rounded-full border border-black/10 bg-white/80 lg:hidden"
             onClick={() => setIsMenuOpen((current) => !current)}
           >
@@ -126,37 +214,78 @@ export function PublicSiteHeader() {
             type="button"
             aria-label="Close navigation overlay"
             className="absolute inset-0"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={closeMenu}
           />
-          <div className="relative mx-4 mt-4 rounded-[1.75rem] border border-white/60 bg-[#f7f2ea] p-4 shadow-[0_30px_100px_-48px_rgba(7,28,26,0.8)]">
+          <nav
+            id="public-site-mobile-nav"
+            aria-label="Main"
+            className="relative mx-4 mt-4 rounded-[1.75rem] border border-white/60 bg-[#f7f2ea] p-4 shadow-[0_30px_100px_-48px_rgba(7,28,26,0.8)]"
+          >
             <div className="flex flex-col gap-2">
-              {navigationItems.map((item) => (
+              <div>
+                <button
+                  type="button"
+                  aria-expanded={isMobileGetInvolvedOpen}
+                  aria-controls="public-site-mobile-get-involved"
+                  onClick={() => setIsMobileGetInvolvedOpen((current) => !current)}
+                  className={`flex w-full items-center justify-between ${mobileLinkClass}`}
+                >
+                  Get Involved
+                  <ChevronDown
+                    aria-hidden="true"
+                    className={`size-4 transition-transform duration-200 ${
+                      isMobileGetInvolvedOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                <ul
+                  id="public-site-mobile-get-involved"
+                  hidden={!isMobileGetInvolvedOpen}
+                  className="mt-1 flex flex-col gap-1 border-l border-[#e2d7c2] pl-3"
+                >
+                  {GET_INVOLVED_LINKS.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={
+                          isActivePath(pathname, item.href) ? "page" : undefined
+                        }
+                        className={`block ${mobileLinkClass}`}
+                        onClick={closeMenu}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {PRIMARY_NAV_LINKS.map((item) => (
                 <Link
-                  key={item.label}
+                  key={item.href}
                   href={item.href}
-                  className="rounded-2xl px-4 py-3 text-sm font-medium text-[#27413d] transition-colors hover:bg-white"
-                  onClick={() => setIsMenuOpen(false)}
+                  aria-current={isActivePath(pathname, item.href) ? "page" : undefined}
+                  className={mobileLinkClass}
+                  onClick={closeMenu}
                 >
                   {item.label}
                 </Link>
               ))}
             </div>
+
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <Link href="/auth?auth=signIn" onClick={() => setIsMenuOpen(false)}>
+              <Link href={SIGN_IN_HREF} onClick={closeMenu}>
                 <Button variant="outline" className="w-full rounded-full">
                   Sign in
                 </Button>
               </Link>
-              <Link
-                href="/auth?auth=signIn&returnUrl=%2Fdashboard%3Ftab%3Dcreate-campaign"
-                onClick={() => setIsMenuOpen(false)}
-              >
+              <Link href={START_CAMPAIGN_HREF} onClick={closeMenu}>
                 <Button className="w-full rounded-full bg-[#c89a2b] text-[#17220f] hover:bg-[#b58b26]">
-                  Start a campaign
+                  Start a Campaign
                 </Button>
               </Link>
             </div>
-          </div>
+          </nav>
         </div>
       ) : null}
     </>

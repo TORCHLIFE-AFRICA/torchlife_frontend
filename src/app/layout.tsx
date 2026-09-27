@@ -69,6 +69,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Scroll-reveal content starts hidden; without JS it must still show. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+      </head>
       <body className={`font-sans antialiased`}>
         <AuthProvider>
           {children}
