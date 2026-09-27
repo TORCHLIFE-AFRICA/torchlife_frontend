@@ -1,11 +1,9 @@
 /**
  * Real TorchLife imagery and people for the About page.
  *
- * Both slots are empty on purpose. Nothing here may be filled with stock
- * photography, a generated image, or an invented person: the hero is meant to
- * show the actual team, and every team entry must be a real person with a role
- * and contribution they have confirmed. While a slot is empty the page simply
- * leaves that visual out, so an unfinished slot never ships a stand-in.
+ * Nothing here may be stock photography, a generated image, or an invented
+ * person: every entry is someone who works on TorchLife, with the role they
+ * confirmed. Nobody carries a job description they did not give us.
  */
 
 export type AboutPhoto = {
@@ -23,9 +21,20 @@ export type AboutPhoto = {
 export type TeamMember = {
   name: string;
   role: string;
-  /** One line on what this person contributes to TorchLife. */
-  contribution: string;
-  photo: AboutPhoto;
+  /**
+   * The person's own portrait. Until one exists the card shows their initials,
+   * so no stand-in face is ever presented as a member of the team. To swap one
+   * in, drop the file under /public and add `photo: { src: "/..." }` here —
+   * `alt` defaults to the person's name and role, and nothing else changes.
+   */
+  photo?: { src: string; alt?: string; position?: string };
+};
+
+export type TeamGroup = {
+  id: string;
+  /** The functional area, as the team describes it. */
+  label: string;
+  members: readonly TeamMember[];
 };
 
 /** Real TorchLife team photograph for the hero. */
@@ -37,5 +46,38 @@ export const ABOUT_HERO_PHOTO: AboutPhoto | null = {
   position: "50% 18%",
 };
 
-/** The people building TorchLife, in the order they should appear. */
-export const TEAM_MEMBERS: readonly TeamMember[] = [];
+/** Head of the organisation, shown above the functional groups. */
+export const TEAM_LEAD: TeamMember = {
+  name: "Agboola Boluwatife",
+  role: "CEO",
+};
+
+/** The functional areas under leadership, in the order they should appear. */
+export const TEAM_GROUPS: readonly TeamGroup[] = [
+  {
+    id: "technology",
+    label: "Technology",
+    members: [
+      { name: "Samuel O. Daniel", role: "Software Engineer (Frontend)" },
+      { name: "Bankole Azeez Babatunde", role: "Software Engineer (Backend)" },
+      { name: "Abolarin John", role: "Tech Assistant" },
+    ],
+  },
+  {
+    id: "research",
+    label: "Research",
+    members: [
+      { name: "Bamidele Oluwabusola", role: "Researcher" },
+      { name: "Edidiong Beatrix Mfonokon", role: "Research Assistant" },
+    ],
+  },
+  {
+    id: "brand-growth",
+    label: "Brand & Growth",
+    members: [
+      { name: "Temitope Adeniyi", role: "Brand Strategist" },
+      { name: "Aishat Aderounmu", role: "Brand Strategist" },
+      { name: "Peter Idowu", role: "Growth Strategist" },
+    ],
+  },
+];
